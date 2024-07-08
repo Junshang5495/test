@@ -1,0 +1,1502 @@
+
+                    Nyquest Technology Co., Ltd.
+
+NYASM 2.42 [Build 240221.00]  File=C:\Users\Administrator\Desktop\NY8A051F\Program\main.asm Date=2024-05-31 18:14:23
+
+    ADDR  OPCODE/VALUE              LINE   TAG  SOURCE                   STATEMENT    
+
+                                    0-   1      
+                                    0-   2      ;--------------- Vector Definition ----------------------------------------
+                                    0-   3      ;--------------------------------------------------------------------------
+                  0                 0-   4      ORG		0x000
+   000000 3855                      0-   5      lgoto	V_Main
+                                    0-   6      
+                  8                 0-   7      ORG		0x008
+   000008 3975                      0-   8      lgoto   V_INT
+                                    0-   9      
+                                    0-  10      
+                 10                 0-  11      ORG		0x010
+                                    0-  12      ; =========================================================================
+                                    0-  13      ;--------------- File Include ---------------------------------------------
+                                    0-  14      ;--------------------------------------------------------------------------
+                                    0-  15      #include		NY8A051F.H				; The Header File for NY8A051F
+                                    1-   1      ;=======================================================================================================================
+                                    1-   2      ;=======================================================================================================================
+                                    1-   3      ;File:			NY8A051F.h
+                                    1-   4      ;Description:	The Header File for NY8A051F
+                                    1-   5      ;Author:		JasonLee
+                                    1-   6      ;Date:			2019/03/12
+                                    1-   7      ;=======================================================================================================================
+                                    1-   8      ;=======================================================================================================================
+                                    1-   9      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  10      ;MOVR and MOVAR instrutions for access R-page Register (General Purpose Register)
+                                    1-  11      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  12      ;R-page sregisters				;	bit7	|	bit6	|	bit5	|	bit4	|	bit3	|	bit2	|	bit1	|	bit0
+                                    1-  13      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  14      ; 00H --------- Indirect Addressing Register
+                  0                 1-  15      INDF				EQU		00H
+                  0                 1-  16      Pr_Indir_Addr		EQU		00H
+                                    1-  17      ; 01H --------- Timer0 Data Register
+                  1                 1-  18      TMR0				EQU		01H
+                  1                 1-  19      Pr_TMR0_Data		EQU		01H
+                                    1-  20      ; 02H --------- Low Byte of Program Counter
+                  2                 1-  21      PCL					EQU		02H
+                  2                 1-  22      Pr_PCLow_Data		EQU		02H
+                                    1-  23      ; 03H --------- Status Register
+                  3                 1-  24      STATUS				EQU		03H
+                  3                 1-  25      Pr_Status			EQU		03H	;	-			-			-			/WDT_TO		/Sleep		Z			Half_C		C
+                                    1-  26      ; 04H --------- File Selection Register (Include SRAM Bank Select)
+                  4                 1-  27      FSR					EQU		04H
+                  4                 1-  28      Pr_File_Sel			EQU		04H	;	BK[1]		BK[0]		FSR[5]		FSR[4]		FSR[3]		FSR[2]		FSR[1]		FSR[0]
+                                    1-  29      ; 05H --------- Reserved
+                                    1-  30      ; 06H --------- PortB Data Register
+                  6                 1-  31      PORTB				EQU		06H
+                  6                 1-  32      PB				EQU		06H
+                  6                 1-  33      Pr_PB_Data			EQU		06H
+                                    1-  34      ; 07H --------- Reserved
+                                    1-  35      ; 08H --------- Power Control Register (WatchDog, ExtINT and LVR Control)
+                  8                 1-  36      PCON				EQU		08H
+                  8                 1-  37      Pr_PWR_Ctrl			EQU		08H	;	WDTEn		ExtINTEn	LVDEn		-			LVREn		-			-			-
+                                    1-  38      ; 09H --------- PortB Wakeup Control Register
+                  9                 1-  39      BWUCON				EQU		09H
+                  9                 1-  40      Pr_PB_WakeUp_Ctrl	EQU		09H	;	-			-			PB[5]		PB[4]		PB[3]		PB[2]		PB[1]		PB[0]
+                                    1-  41      ; 0AH --------- High Byte of Program Counter (B'xxxxxxDD')
+                  A                 1-  42      PCHBUF				EQU		0AH
+                  A                 1-  43      Pr_PCHigh_Data		EQU		0AH	;	-			-			-			-			-			-			PCHBUF[1]	PCHBUF[0]
+                                    1-  44      ; 0BH --------- PortB Pull-Low Control Register
+                  B                 1-  45      BPLCON				EQU		0BH
+                  B                 1-  46      Pr_PB_PL_Ctrl		EQU		0BH	;	/PB[3]		/PB[2]		/PB[1]		/PB[0]		-			-			-			-
+                                    1-  47      ; 0CH --------- PortB Pull-High Control Register
+                  C                 1-  48      BPHCON				EQU		0CH
+                  C                 1-  49      Pr_PB_PH_Ctrl		EQU		0CH	;	-			-			/PB[5]		/PB[4]		/PB[3]	    /PB[2]		/PB[1]		/PB[0]
+                                    1-  50      ; 0DH --------- Reserved
+                                    1-  51      ; 0EH --------- Interrupt Enable Register
+                  E                 1-  52      INTE				EQU		0EH
+                  E                 1-  53      Pr_INT_Ctrl			EQU		0EH	;	-			WDT			-			LVD			TMR1		ExtINT		PBKey		TMR0
+                                    1-  54      ; 0FH --------- Interrupt Flag	(Write '0' to Clear Flag)
+                  F                 1-  55      INTF				EQU		0FH
+                  F                 1-  56      Pr_INT_Flag			EQU		0FH	;	-			WDT			-			LVD			TMR1		ExtINT		PBKey		TMR0
+                                    1-  57      
+                                    1-  58      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  59      ;T0MD and T0MDR instrutions for access T0MD Register
+                                    1-  60      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  61      ; xxH --------- Timer0 Control Register (Only Accessed by Instruction T0MD)
+                                    1-  62      ;T0MD				EQU		xxH	;	LClkSrc		INTEdge		ClkSel		EdgeSel		PS0WDT		PS0Div[2]	PS0Div[1]	PS0Div[0]
+                                    1-  63      ;P_TMR0_Ctrl
+                                    1-  64      
+                                    1-  65      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  66      ;IOST and IOSTR instrution for access F-page Register (IO Configuration Register)
+                                    1-  67      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  68      ;F-page registers				;	bit7	|	bit6	|	bit5	|	bit4	|	bit3	|	bit2	|	bit1	|	bit0
+                                    1-  69      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  70      ; 05H --------- Reserved
+                                    1-  71      ; 06H --------- PortB Direction(1:Input/0:Output) Control Register
+                  6                 1-  72      IOSTB				EQU		06H
+                  6                 1-  73      Pf_PB_Dir_Ctrl		EQU		06H
+                                    1-  74      ; 0AH --------- Prescaler0 Counter Value Register
+                  A                 1-  75      PS0CV				EQU		0AH
+                  A                 1-  76      Pf_PS0_Cnt			EQU		0AH
+                                    1-  77      ; 0CH --------- PortB Open-Drain Control Register
+                  C                 1-  78      BODCON				EQU		0CH
+                  C                 1-  79      Pf_PB_OD_Ctrl		EQU		0CH	;	-			-			PB[5]		PB[4]		-  			PB[2]		PB[1]		PB[0]
+                                    1-  80      ; 0FH --------- Power Control Register 1
+                  F                 1-  81      PCON1				EQU		0FH
+                  F                 1-  82      Pf_PWR_Ctrl1		EQU		0FH	;	INTEn		LVDOUT		LVDS3		LVDS2		LVDS1		LVDS0		-			TMR0En
+                                    1-  83      
+                                    1-  84      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  85      ;SFUN and SFUNR instrution for access S-page Register (Special Function Register)
+                                    1-  86      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  87      ;S-page registers				;	bit7	|	bit6	|	bit5	|	bit4	|	bit3	|	bit2	|	bit1	|	bit0
+                                    1-  88      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1-  89      ; 00H --------- Timer1 Data Register
+                  0                 1-  90      TMR1				EQU		00H
+                  0                 1-  91      Ps_TMR1_Data		EQU		00H
+                                    1-  92      ; 01H --------- Timer1 Control Register	1
+                  1                 1-  93      T1CR1				EQU		01H
+                  1                 1-  94      Ps_TMR1_Ctrl1		EQU		01H	;	PWM1En		PWM1ActB	-			-			-			OneShot		Reload		TMR1En
+                                    1-  95      ; 02H --------- Timer1 Control Register	2
+                  2                 1-  96      T1CR2				EQU		02H
+                  2                 1-  97      Ps_TMR1_Ctrl2		EQU		02H	;	-			-			ClkSel		EdgeSel		/PS1En		PS1Div[2]	PS1Div[1]	PS1Div[0]
+                                    1-  98      ; 03H --------- PWM1 Duty Register
+                  3                 1-  99      PWM1DUTY			EQU		03H
+                  3                 1- 100      Ps_PWM1_Duty		EQU		03H
+                                    1- 101      ; 04H --------- Prescaler1 Counter Value Register
+                  4                 1- 102      PS1CV				EQU		04H
+                  4                 1- 103      Ps_PS1_Cnt			EQU		04H
+                                    1- 104      ; 05H --------- Buzzer1 Control Register
+                  5                 1- 105      BZ1CR				EQU		05H
+                  5                 1- 106      Ps_BZ1_Ctrl			EQU		05H	;	BZ1En		-			-			-			FSel[3]		FSel[2]		FSel[1]		FSel[0]
+                                    1- 107      ; 06H --------- IR Control Register
+                  6                 1- 108      IRCR				EQU		06H
+                  6                 1- 109      Ps_IR_Ctrl			EQU		06H	;	-		    -			-			-			-			PolSel  	IRF57K		IREn
+                                    1- 110      ; 07H --------- Table Access High Byte Address Pointer Register
+                  7                 1- 111      TBHP				EQU		07H
+                  7                 1- 112      Ps_TbHigh_Addr		EQU		07H	;	-			-			-			-		    -		    HPoint[2]	HPoint[1]	HPoint[0]
+                                    1- 113      ; 08H --------- Table Access High Byte Data Register
+                  8                 1- 114      TBHD				EQU		08H
+                  8                 1- 115      Ps_TbHigh_Data		EQU		08H	;	-			-			HData[5]	HData[4]	HData[3]	HData[2]	HData[1]	HData[0]
+                                    1- 116      ; 0FH --------- Oscillation Control Register (Include Switch Working Mode)
+                  F                 1- 117      OSCCR				EQU		0FH
+                  F                 1- 118      Ps_SYS_Ctrl			EQU		0FH	;	-			-			-			-			Mode[1]		Mode[0]		HOSC_Stop	HOSC_Sel
+                                    1- 119      
+                                    1- 120      ;=======================================================================================================================
+                                    1- 121      ;=======================================================================================================================
+                                    1- 122      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1- 123      ; R-page Special Function Register (General Purpose Register)
+                                    1- 124      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1- 125      ;------------------------------------------------------------
+                                    1- 126      ; Pr_Indir_Addr (00H)	--------- Indirect Addressing Register
+                                    1- 127      ;------------------------------------------------------------
+                                    1- 128      ;Bit[7:0] : Indirect Address
+                 FF                 1- 129      C_Indir_Addr		EQU		FFH
+                                    1- 130      
+                                    1- 131      ;------------------------------------------------------------
+                                    1- 132      ; Pr_TMR0_Data (01H)	--------- Timer0 Data Register
+                                    1- 133      ;------------------------------------------------------------
+                                    1- 134      ;Bit[7:0] : Timer0 Data
+                 FF                 1- 135      C_TMR0_Data			EQU		FFH
+                                    1- 136      
+                                    1- 137      ;------------------------------------------------------------
+                                    1- 138      ; Pr_PCLow_Data (02H)	--------- Low Byte of Program Counter
+                                    1- 139      ;------------------------------------------------------------
+                                    1- 140      ;Bit[7:0] : Low Byte of Program Counter
+                 FF                 1- 141      C_PCLow_Data		EQU		FFH
+                                    1- 142      
+                                    1- 143      ;------------------------------------------------------------
+                                    1- 144      ; Pr_Status (03H)		--------- Status Register
+                                    1- 145      ;------------------------------------------------------------
+                                    1- 146      ;Bit[7:5] : Reserved
+                                    1- 147      ;Bit[4:0] : System Status
+                 10                 1- 148      C_Status_WDT		EQU		10H			; WatchDog Overflow Flag
+                  8                 1- 149      C_Status_Slp		EQU		08H			; Sleep (Power Down) Flag
+                  4                 1- 150      C_Status_Z			EQU		04H			; Zero Flag
+                  2                 1- 151      C_Status_HalfC		EQU		02H			; Half Carry/Half Borrow Flag
+                  1                 1- 152      C_Status_C			EQU		01H			; Carry/Borrow Flag
+                                    1- 153      
+                  4                 1- 154      C_Status_WDT_Bit	EQU		4
+                  3                 1- 155      C_Status_Slp_Bit	EQU		3
+                  2                 1- 156      C_Status_Z_Bit		EQU		2
+                  1                 1- 157      C_Status_HalfC_Bit	EQU		1
+                  0                 1- 158      C_Status_C_Bit		EQU		0
+                                    1- 159      
+                  2                 1- 160      Z					EQU		2
+                  0                 1- 161      C					EQU		0
+                                    1- 162      ;------------------------------------------------------------
+                                    1- 163      ; Pr_File_Sel (04H)		--------- File Selection Register (Include SRAM Bank Select)
+                                    1- 164      ;------------------------------------------------------------
+                                    1- 165      ;Bit[7:6] : FSR Bit Define
+                 C0                 1- 166      C_SFR_Bank			EQU		C0H			; Select Ram Bank
+                  0                 1- 167      C_SFR_Bank0			EQU		00H			; Select Ram Bank0
+                 40                 1- 168      C_SFR_Bank1			EQU		40H			; Select Ram Bank1
+                 80                 1- 169      C_SFR_Bank2			EQU		80H			; Select Ram Bank2
+                 C0                 1- 170      C_SFR_Bank3			EQU		C0H			; Select Ram Bank3
+                                    1- 171      ;Bit[5:0] : Select one Register out of 64 registers of specific Bank.
+                 3F                 1- 172      C_SFR_RAM_Addr		EQU		3FH			; RAM Address Bit[5:0]
+                                    1- 173      
+                                    1- 174      ;------------------------------------------------------------
+                                    1- 175      ; Pr_PB_Data (06H)		--------- PortB Data Register
+                                    1- 176      ;------------------------------------------------------------
+                                    1- 177      ;Bit[7:6] : Reserved
+                                    1- 178      ;Bit[5:0] : PORTB Data Bit Define
+                 3F                 1- 179      C_PB_Data			EQU		3FH			; PB Data
+                 20                 1- 180      C_PB5_Data			EQU		20H			; PB5 Data
+                 10                 1- 181      C_PB4_Data			EQU		10H			; PB4 Data
+                  8                 1- 182      C_PB3_Data			EQU		08H			; PB3 Data
+                  4                 1- 183      C_PB2_Data			EQU		04H			; PB2 Data
+                  2                 1- 184      C_PB1_Data			EQU		02H			; PB1 Data
+                  1                 1- 185      C_PB0_Data			EQU		01H			; PB0 Data
+                                    1- 186      
+                                    1- 187      ;------------------------------------------------------------
+                                    1- 188      ; Pr_PWR_Ctrl (08H)		--------- Power Control Register (WatchDog, ExtINT and LVR Control)
+                                    1- 189      ;------------------------------------------------------------
+                                    1- 190      ;Bit[7] : WatchDog Eanble
+                 80                 1- 191      C_WDT_En			EQU		80H			; WatchDog Enable
+                                    1- 192      ;Bit[6] : External INT Eanble
+                 40                 1- 193      C_ExtINT_En			EQU		40H			; External INT Enable
+                                    1- 194      ;Bit[5] : LVD Eanble
+                 20                 1- 195      C_LVD_En			EQU		20H			; LVD Enable
+                                    1- 196      ;Bit[4] : Reserved
+                                    1- 197      ;Bit[3] : LVR Enable
+                  8                 1- 198      C_LVR_En			EQU		08H			; LVR Enable
+                                    1- 199      ;Bit[2:0] : Reserved
+                                    1- 200      
+                                    1- 201      ;------------------------------------------------------------
+                                    1- 202      ; Pr_PB_WakeUp_Ctrl (09H)	--------- PortB Wakeup Control Register
+                                    1- 203      ;------------------------------------------------------------
+                                    1- 204      ;Bit[7:6] : Reserved
+                                    1- 205      ;Bit[5:0] : BWUCON Bit Define
+                 3F                 1- 206      C_PB_Wakeup			EQU		3FH			; PortB Wakeup Enable
+                 20                 1- 207      C_PB5_Wakeup		EQU		20H			; PB5 Wakeup Enable
+                 10                 1- 208      C_PB4_Wakeup		EQU		10H			; PB4 Wakeup Enable
+                  8                 1- 209      C_PB3_Wakeup		EQU		08H			; PB3 Wakeup Enable
+                  4                 1- 210      C_PB2_Wakeup		EQU		04H			; PB2 Wakeup Enable
+                  2                 1- 211      C_PB1_Wakeup		EQU		02H			; PB1 Wakeup Enable
+                  1                 1- 212      C_PB0_Wakeup		EQU		01H			; PB0 Wakeup Enable
+                                    1- 213      
+                                    1- 214      ;------------------------------------------------------------
+                                    1- 215      ; Pr_PCHigh_Data (0AH) --------- High Byte of Program Counter
+                                    1- 216      ;------------------------------------------------------------
+                                    1- 217      ;Bit[7:2] : Reserved
+                                    1- 218      ;Bit[1:0] : High Byte of Program Counter
+                  3                 1- 219      C_PCHigh_Data		EQU		03H
+                                    1- 220      
+                                    1- 221      ;------------------------------------------------------------
+                                    1- 222      ; Pr_PB_PL_Ctrl (0BH)	--------- PortB Pull-Low Control Register
+                                    1- 223      ;------------------------------------------------------------
+                                    1- 224      ;Bit[7:4] : PortB Pull-Low Control Register (1:Disable, 0:Pull-High)
+                 F0                 1- 225      C_PB_PLB			EQU		F0H			; PortB Pull-Low Control bit
+                 80                 1- 226      C_PB3_PLB			EQU		80H			; PB3 Pull-Low Control bit
+                 40                 1- 227      C_PB2_PLB			EQU		40H			; PB2 Pull-Low Control bit
+                 20                 1- 228      C_PB1_PLB			EQU		20H			; PB1 Pull-Low Control bit
+                 10                 1- 229      C_PB0_PLB			EQU		10H			; PB0 Pull-Low Control bit
+                                    1- 230      ;Bit[3:0] : Reserved
+                                    1- 231      
+                                    1- 232      ;------------------------------------------------------------
+                                    1- 233      ; Pr_PB_PH_Ctrl (0CH)	--------- PortB Pull-High Control Register
+                                    1- 234      ;------------------------------------------------------------
+                                    1- 235      ;Bit[7:6] : Reserved
+                                    1- 236      ;Bit[5:0]: PortB Pull-High Control Register (1:Disable, 0:Pull-High)
+                 3F                 1- 237      C_PB_PHB			EQU		3FH			; PortB Pull-Low Control bit
+                 20                 1- 238      C_PB5_PHB			EQU		20H			; PB5 Pull-Low Control bit
+                 10                 1- 239      C_PB4_PHB			EQU		10H			; PB4 Pull-Low Control bit
+                  8                 1- 240      C_PB3_PHB			EQU		08H			; PB3 Pull-Low Control bit
+                  4                 1- 241      C_PB2_PHB			EQU		04H			; PB2 Pull-Low Control bit
+                  2                 1- 242      C_PB1_PHB			EQU		02H			; PB1 Pull-Low Control bit
+                  1                 1- 243      C_PB0_PHB			EQU		01H			; PB0 Pull-Low Control bit
+                                    1- 244      
+                                    1- 245      ;------------------------------------------------------------
+                                    1- 246      ; Pr_INT_Ctrl (0EH)		--------- Interrupt Enable Register
+                                    1- 247      ; Pr_INT_Flag (0FH)		--------- Interrupt Flag
+                                    1- 248      ;------------------------------------------------------------
+                                    1- 249      ;Bit[7] : Reserved
+                                    1- 250      ;Bit[6] : WatchDog Flag
+                 40                 1- 251      C_INT_WDT			EQU		40H			; WDT timeout interrupt enable bit
+                                    1- 252      ;Bit[5] : Reserved
+                                    1- 253      ;Bit[4] : LVD Flag
+                 10                 1- 254      C_INT_LVD			EQU		10H			; LVD interrupt enable bit
+                                    1- 255      ;Bit[3:0] : Interrupt Source
+                  8                 1- 256      C_INT_TMR1			EQU		08H			; Timer1 underflow interrupt enable bit
+                  4                 1- 257      C_INT_EXT			EQU		04H			; External interrupt enable bit
+                  2                 1- 258      C_INT_PBKey			EQU		02H			; PortB input change interrupt enable bit
+                  1                 1- 259      C_INT_TMR0			EQU		01H			; Timer0 overflow interrupt enable bit
+                                    1- 260      
+                  6                 1- 261      C_INT_WDT_Bit		EQU		6
+                  4                 1- 262      C_INT_LVD_Bit		EQU		4
+                  3                 1- 263      C_INT_TMR1_Bit		EQU		3
+                  2                 1- 264      C_INT_EXT_Bit		EQU		2
+                  1                 1- 265      C_INT_PBKey_Bit		EQU		1
+                  0                 1- 266      C_INT_TMR0_Bit		EQU		0
+                                    1- 267      
+                                    1- 268      ;------------------------------------------------------------
+                                    1- 269      ; P_TMR0_Ctrl (xxH)		--------- T0MD Register
+                                    1- 270      ;------------------------------------------------------------
+                                    1- 271      ;		C_TMR0_Clk		C_TMR0_LowClk	|	Timer 0 Clock Source
+                                    1- 272      ;------------------------------------------------------------
+                                    1- 273      ;		0				x				|	From Instruction Clock
+                                    1- 274      ;		1				0				|	From External Pin
+                                    1- 275      ;		1				1				|	From Low Oscillator Frequency (I_LRC )
+                                    1- 276      ;------------------------------------------------------------
+                                    1- 277      ;Bit[7:4] : Timer0 Clock Source Selection
+                 80                 1- 278      C_TMR0_LowClk		EQU		80H			; Same as LCKTM0
+                 40                 1- 279      C_EXINT_Edge		EQU		40H			; External INT Edge Select --- 1:Rising Edge, 0:Falling Edge
+                 20                 1- 280      C_TMR0_Clk			EQU		20H			; Same as T0CS
+                 10                 1- 281      C_TMR0_ExtClk_Edge	EQU		10H			; Timer0 External Clock Edge Select --- 1:Falling Edge, 0:Rising Edge
+                                    1- 282      
+                                    1- 283      ;Bit[3] : Watchdog Interrupt Source Selection / Timer0 Prescaler0 Selection
+                  8                 1- 284      C_PS0_WDT			EQU		08H			; Prescaler0 is assigned to WDT
+                  0                 1- 285      C_PS0_TMR0			EQU		00H			; Prescaler0 is assigned to TMR0
+                                    1- 286      ;Bit[2:0] : Prescaler0 Dividing Rate Selection
+                  7                 1- 287      C_PS0_Div			EQU		07H			; Prescaler0 Dividing Rate Selection
+                  0                 1- 288      C_PS0_Div2			EQU		00H
+                  1                 1- 289      C_PS0_Div4			EQU		01H
+                  2                 1- 290      C_PS0_Div8			EQU		02H
+                  3                 1- 291      C_PS0_Div16			EQU		03H
+                  4                 1- 292      C_PS0_Div32			EQU		04H
+                  5                 1- 293      C_PS0_Div64			EQU		05H
+                  6                 1- 294      C_PS0_Div128		EQU		06H
+                  7                 1- 295      C_PS0_Div256		EQU		07H
+                                    1- 296      
+                                    1- 297      ;=======================================================================================================================
+                                    1- 298      ;=======================================================================================================================
+                                    1- 299      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1- 300      ; F-page Special Function Register (IO Configuration Register)
+                                    1- 301      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1- 302      ;------------------------------------------------------------
+                                    1- 303      ; Pf_PB_Dir_Ctrl (06H)	--------- PortB Direction(Input/Output) Control Register
+                                    1- 304      ;------------------------------------------------------------
+                                    1- 305      ;Bit[7:6] : Reserved
+                                    1- 306      ;Bit[5:0] : Port B Input/Output Mode Selection (1:Input, 0:Output)
+                 3F                 1- 307      C_PB_Input			EQU		3FH			; Port B Input Mode Control
+                  0                 1- 308      C_PB_Output			EQU		00H			; Port B Output Mode Control
+                                    1- 309      
+                 20                 1- 310      C_PB5_Input			EQU		20H			; PB5 I/O mode Control bit
+                 10                 1- 311      C_PB4_Input			EQU		10H			; PB4 I/O mode Control bit
+                  8                 1- 312      C_PB3_Input			EQU		08H			; PB3 I/O mode Control bit
+                  4                 1- 313      C_PB2_Input			EQU		04H			; PB2 I/O mode Control bit
+                  2                 1- 314      C_PB1_Input			EQU		02H			; PB1 I/O mode Control bit
+                  1                 1- 315      C_PB0_Input			EQU		01H			; PB0 I/O mode Control bit
+                  0                 1- 316      C_PB5_Output		EQU		00H			; PB5 I/O mode Control bit
+                  0                 1- 317      C_PB4_Output		EQU		00H			; PB4 I/O mode Control bit
+                  0                 1- 318      C_PB3_Output		EQU		00H			; PB3 I/O mode Control bit
+                  0                 1- 319      C_PB2_Output		EQU		00H			; PB2 I/O mode Control bit
+                  0                 1- 320      C_PB1_Output		EQU		00H			; PB1 I/O mode Control bit
+                  0                 1- 321      C_PB0_Output		EQU		00H			; PB0 I/O mode Control bit
+                                    1- 322      
+                                    1- 323      ;------------------------------------------------------------
+                                    1- 324      ; Pf_PS0_Cnt (0AH)		--------- Prescaler0 Counter Value Register
+                                    1- 325      ;------------------------------------------------------------
+                                    1- 326      ;Bit[7:0] : Prescaler0 Counter Value
+                 FF                 1- 327      C_PS0_Cnt			EQU		FFH			; 8-Bit register
+                                    1- 328      
+                                    1- 329      ;------------------------------------------------------------
+                                    1- 330      ; Pf_PB_OD_Ctrl (0CH)	--------- PortB Open-Drain Control Register
+                                    1- 331      ;------------------------------------------------------------
+                                    1- 332      ;Bit[7:6]&Bit[3]: Reserved
+                                    1- 333      ;Bit[5:4]&Bit[2:0] : PortB Open-Drain Control (1:Open-Drain, 0:Disable)
+                 37                 1- 334      C_PB_OD				EQU		37H			; Port B Open-Drain Control
+                 20                 1- 335      C_PB5_OD			EQU		20H			; PB5 Open-Drain Control bit
+                 10                 1- 336      C_PB4_OD			EQU		10H			; PB4 Open-Drain Control bit
+                  4                 1- 337      C_PB2_OD			EQU		04H			; PB2 Open-Drain Control bit
+                  2                 1- 338      C_PB1_OD			EQU		02H			; PB1 Open-Drain Control bit
+                  1                 1- 339      C_PB0_OD			EQU		01H			; PB0 Open-Drain Control bit
+                                    1- 340      
+                                    1- 341      ;------------------------------------------------------------
+                                    1- 342      ; Pf_PWR_Ctrl1 (0FH)	--------- Power Control Register 1
+                                    1- 343      ;------------------------------------------------------------
+                                    1- 344      ;Bit[7] : All Interrupt Enable
+                 80                 1- 345      C_All_INT_En		EQU		80H			; Enable all unmasked interrupts
+                                    1- 346      ;Bit[6] : Low voltage detector output
+                 40                 1- 347      C_LVDOUT			EQU		40H			; read-only
+                                    1- 348      ;Bit[5:2] : Select one of the 8 LVD voltage
+                 3C                 1- 349      C_LVD_4P15V			EQU		3CH			; LVD Voltage=4.15V
+                 2C                 1- 350      C_LVD_4P05V			EQU		2CH			; LVD Voltage=4.05V
+                 24                 1- 351      C_LVD_3P95V			EQU		24H			; LVD Voltage=3.95V
+                 1C                 1- 352      C_LVD_3P6V			EQU		1CH			; LVD Voltage=3.6V
+                 18                 1- 353      C_LVD_3P3V			EQU		18H			; LVD Voltage=3.3V
+                 14                 1- 354      C_LVD_3P0V			EQU		14H			; LVD Voltage=3.0V
+                 10                 1- 355      C_LVD_2P9V			EQU		10H			; LVD Voltage=2.9V
+                  C                 1- 356      C_LVD_2P8V			EQU		0CH			; LVD Voltage=2.8V
+                  8                 1- 357      C_LVD_2P4V			EQU		08H			; LVD Voltage=2.4V
+                  4                 1- 358      C_LVD_2P2V			EQU		04H			; LVD Voltage=2.2V
+                  0                 1- 359      C_LVD_2P0V			EQU		00H			; LVD Voltage=2.0V
+                                    1- 360      ;Bit[0] : Timer0 Enable
+                  1                 1- 361      C_TMR0_En			EQU		01H			; Enable Timer0
+                  0                 1- 362      C_TMR0_Dis			EQU		00H			; Disable Timer0
+                                    1- 363      
+                                    1- 364      ;=======================================================================================================================
+                                    1- 365      ;=======================================================================================================================
+                                    1- 366      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1- 367      ; S-page Special Function Register (Special Function Register)
+                                    1- 368      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1- 369      ;------------------------------------------------------------
+                                    1- 370      ; Ps_TMR1_Data (00H)	--------- Timer1 Data Register
+                                    1- 371      ;------------------------------------------------------------
+                                    1- 372      ;Bit[7:0] : Timer1 Data
+                 FF                 1- 373      C_TMR1_Data			EQU		FFH
+                                    1- 374      
+                                    1- 375      ;------------------------------------------------------------
+                                    1- 376      ; Ps_TMR1_Ctrl1 (01H)	--------- Timer1 Control Register 1
+                                    1- 377      ;------------------------------------------------------------
+                                    1- 378      ;Bit[7:6] : PWM1 Control
+                 80                 1- 379      C_PWM1_En			EQU		80H 		; PWM1 output will be present on PB6
+                 40                 1- 380      C_PWM1_Active		EQU		40H 		; PWM1 output is active
+                 40                 1- 381      C_PWM1_Active_Lo	EQU		40H 		; PWM1 output is active low
+                  0                 1- 382      C_PWM1_Active_Hi	EQU		00H 		; PWM1 output is active high
+                                    1- 383      ;Bit[5:3] : Reserved
+                                    1- 384      ;Bit[2:0] : Timer1 Control
+                  4                 1- 385      C_TMR1_OneShot		EQU		04H 		; One-Shot mode. Timer1 will count once from the initial value to 0x00
+                  2                 1- 386      C_TMR1_Reload		EQU		02H 		; Initial value is reloaded from reload register TMR1(T1OS=0)
+                                    1- 387      
+                  1                 1- 388      C_TMR1_En			EQU		01H 		; Enable Timer1
+                  0                 1- 389      C_TMR1_Dis			EQU		00H 		; Disable Timer1
+                                    1- 390      
+                                    1- 391      ;------------------------------------------------------------
+                                    1- 392      ; Ps_TMR1_Ctrl2 (02H)	--------- Timer1 Control Register	2
+                                    1- 393      ;------------------------------------------------------------
+                                    1- 394      ;Bit[7:6] : Reserved
+                                    1- 395      ;Bit[5] : Timer1 Clock Source Select
+                 20                 1- 396      C_TMR1_ClkSrc_Ext	EQU		20H			; Timer1 clock source from External Clock Input
+                  0                 1- 397      C_TMR1_ClkSrc_Inst	EQU		00H			; Timer1 clock source from Internal Instruction Clock
+                                    1- 398      
+                                    1- 399      
+                                    1- 400      ;Bit[4] : Timer1 external clock edge selection
+                 10                 1- 401      C_TMR1_ExtClk_Edge	EQU		10H			; Timer1 External Clock Edge Select --- 1:Falling Edge, 0:Rising Edge
+                 10                 1- 402      C_TMR1_ExtFalling	EQU		10H			; Timer1 will decrease one while EX_CKI Falling Edge.
+                  0                 1- 403      C_TMR1_ExtRising	EQU		00H			; Timer1 will decrease one while EX_CKI Rising Edge.
+                                    1- 404      ;Bit[3] :  Disable/enable Prescaler1
+                  8                 1- 405      C_PS1_Dis           EQU		08H			; Enable Prescaler1
+                  0                 1- 406      C_PS1_EN			EQU		00H			; Disable Prescaler1
+                                    1- 407      ;Bit[2:0] : Prescaler 1 Dividing Rate Selection
+                  7                 1- 408      C_PS1_Div			EQU		07H			; Prescaler1 Dividing Rate Selection
+                  0                 1- 409      C_PS1_Div2			EQU		00H
+                  1                 1- 410      C_PS1_Div4			EQU		01H
+                  2                 1- 411      C_PS1_Div8			EQU		02H
+                  3                 1- 412      C_PS1_Div16			EQU		03H
+                  4                 1- 413      C_PS1_Div32			EQU		04H
+                  5                 1- 414      C_PS1_Div64			EQU		05H
+                  6                 1- 415      C_PS1_Div128		EQU		06H
+                  7                 1- 416      C_PS1_Div256		EQU		07H
+                                    1- 417      
+                                    1- 418      ;------------------------------------------------------------
+                                    1- 419      ; Ps_PWM1_Duty (03H)	--------- PWM1 Duty Register
+                                    1- 420      ;------------------------------------------------------------
+                                    1- 421      ;Bit[7:0] : PWM1 Duty Value
+                 FF                 1- 422      C_PWM1_Duty			EQU		FFH
+                                    1- 423      
+                                    1- 424      ;------------------------------------------------------------
+                                    1- 425      ; Ps_PS1_Cnt (04H)		--------- Prescaler1 Counter Value Register
+                                    1- 426      ;------------------------------------------------------------
+                                    1- 427      ;Bit[7:0] : rescaler1 Counter Value
+                 FF                 1- 428      C_PS1_Cnt			EQU		FFH			; 8-Bit register
+                                    1- 429      
+                                    1- 430      ;------------------------------------------------------------
+                                    1- 431      ; Ps_BZ1_Ctrl (05H)		--------- Buzzer1 Control Register
+                                    1- 432      ;------------------------------------------------------------
+                                    1- 433      ;Bit[7] : BZ1 Enable
+                 80                 1- 434      C_BZ1_En			EQU		80H			; Enable BZ1 output
+                                    1- 435      ;Bit[6:4] : Reserved
+                                    1- 436      ;Bit[3:0] : BZ1 Frequency Selection
+                  F                 1- 437      C_BZ1_FSel			EQU		0FH			; BZ1 frequency selection
+                                    1- 438      
+                  0                 1- 439      C_BZ1_PS1Div2		EQU		00H			; Clock Soruce from Prescaler 1
+                  1                 1- 440      C_BZ1_PS1Div4		EQU		01H
+                  2                 1- 441      C_BZ1_PS1Div8		EQU		02H
+                  3                 1- 442      C_BZ1_PS1Div16		EQU		03H
+                  4                 1- 443      C_BZ1_PS1Div32		EQU		04H
+                  5                 1- 444      C_BZ1_PS1Div64		EQU		05H
+                  6                 1- 445      C_BZ1_PS1Div128		EQU		06H
+                  7                 1- 446      C_BZ1_PS1Div256		EQU		07H
+                                    1- 447      
+                  8                 1- 448      C_BZ1_TMR1B0		EQU		08H			; Clock Source from Timer 1
+                  9                 1- 449      C_BZ1_TMR1B1		EQU		09H
+                  A                 1- 450      C_BZ1_TMR1B2		EQU		0AH
+                  B                 1- 451      C_BZ1_TMR1B3		EQU		0BH
+                  C                 1- 452      C_BZ1_TMR1B4		EQU		0CH
+                  D                 1- 453      C_BZ1_TMR1B5		EQU		0DH
+                  E                 1- 454      C_BZ1_TMR1B6		EQU		0EH
+                  F                 1- 455      C_BZ1_TMR1B7		EQU		0FH
+                                    1- 456      
+                                    1- 457      ;------------------------------------------------------------
+                                    1- 458      ; Ps_IR_Ctrl (06H)		--------- IR Control Register
+                                    1- 459      ;------------------------------------------------------------
+                                    1- 460      ;Bit[7:3] : Reserved
+                                    1- 461      ;Bit[2] : IR Polarity Selection
+                  4                 1- 462      C_IR_Pol_Sel		EQU		04H
+                                    1- 463      ;Bit[1] : IR Carrier Frequency Selection (1:57K, 0:38KHz)
+                  2                 1- 464      C_IR_57K			EQU		02H			; IRCR[1]=1 , IR carrier frequency is 57KHz
+                  0                 1- 465      C_IR_38K			EQU		00H			; IRCR[1]=0 , IR carrier frequency is 57KHz
+                                    1- 466      ;Bit[0] : IR Enable
+                  1                 1- 467      C_IR_En				EQU		01H			; Enable IR carrier output
+                                    1- 468      
+                                    1- 469      ;------------------------------------------------------------
+                                    1- 470      ; Ps_TbHigh_Addr (07H)	--------- Table Access High Byte Address Pointer Register
+                                    1- 471      ;------------------------------------------------------------
+                                    1- 472      ;Bit[7:2] : Reserved
+                                    1- 473      ;Bit[1:0] : Table Access High Byte Address Pointer
+                  3                 1- 474      C_TbHigh_Addr		EQU		03H			; When instruction CALLA, GOTOA or TABLEA is executed TBHP[1:0] is PC[9:8]
+                                    1- 475      
+                                    1- 476      ;------------------------------------------------------------
+                                    1- 477      ; Ps_TbHigh_Data (08H)	--------- Table Access High Byte Data Register
+                                    1- 478      ;------------------------------------------------------------
+                                    1- 479      ;Bit[7:6] : Reserved
+                                    1- 480      ;Bit[5:0] : Table Access High Byte Data
+                 3F                 1- 481      C_TbHigh_Data		EQU		3FH
+                                    1- 482      
+                                    1- 483      ;------------------------------------------------------------
+                                    1- 484      ; Ps_SYS_Ctrl (0FH)	--------- Table Access High Byte Data Register
+                                    1- 485      ;------------------------------------------------------------
+                                    1- 486      ;Bit[7:4] : Reserved
+                                    1- 487      ;Bit[3:2] : System Mode Select
+                  C                 1- 488      C_Mode				EQU		0CH			; System Operating Mode Selection
+                  0                 1- 489      C_Normal_Mode		EQU		00H			; Enter Normal mode
+                  4                 1- 490      C_Halt_Mode			EQU		04H			; Enter Halt mode
+                  8                 1- 491      C_Standby_Mode		EQU		08H			; Enter Standby mode
+                                    1- 492      ;Bit[1] : Stop FHOSC
+                  2                 1- 493      C_FHOSC_Stop		EQU		02H			; Disable high-frequency oscillation (FHOSC)
+                                    1- 494      ;Bit[0] : FOSC Seletction
+                  1                 1- 495      C_FHOSC_Sel			EQU		01H			; OSCCR[0]=1 , FOSC is high-frequency oscillation (FHOSC)
+                  0                 1- 496      C_FLOSC_Sel			EQU		00H			; OSCCR[0]=0 , FOSC is Low-frequency oscillation (FLOSC)
+                                    1- 497      
+                                    1- 498      
+                                    1- 499      
+                                    1- 500      ;=======================================================================================================================
+                                    1- 501      ;=======================================================================================================================
+                                    1- 502      ;-----------------------------------------------------------------------------------------------------------------------
+                                    1- 503      ;General Constant Define
+                                    1- 504      ;-----------------------------------------------------------------------------------------------------------------------
+                  0                 1- 505      C_SaveToAcc			EQU		00H
+                  1                 1- 506      C_SaveToReg			EQU		01H
+                  0                 1- 507      A			EQU		00H
+                  1                 1- 508      R			EQU		01H
+                                    1- 509      
+                  1                 1- 510      C_Bit0				EQU		01H
+                  2                 1- 511      C_Bit1				EQU		02H
+                  4                 1- 512      C_Bit2				EQU		04H
+                  8                 1- 513      C_Bit3				EQU		08H
+                 10                 1- 514      C_Bit4				EQU		10H
+                 20                 1- 515      C_Bit5				EQU		20H
+                 40                 1- 516      C_Bit6				EQU		40H
+                 80                 1- 517      C_Bit7				EQU		80H
+                                    1- 518      
+                  0                 1- 519      C_Num0				EQU		0
+                  1                 1- 520      C_Num1				EQU		1
+                  2                 1- 521      C_Num2				EQU		2
+                  3                 1- 522      C_Num3				EQU		3
+                  4                 1- 523      C_Num4				EQU		4
+                  5                 1- 524      C_Num5				EQU		5
+                  6                 1- 525      C_Num6				EQU		6
+                  7                 1- 526      C_Num7				EQU		7
+                                    1- 527      
+                                    0-  16      #include		Register.asm
+                                    2-   1      ;===================================
+                                    2-   2      ;IO定义
+                  5                 2-   3      key1			=	5
+                  3                 2-   4      key2			=	3
+                                    2-   5      
+                                    2-   6      #define	P_out	PB,4
+                                    2-   7      #define	P_led1	PB,0
+                                    2-   8      #define	P_led2	PB,1
+                                    2-   9      #define	P_led3	PB,2
+                                    2-  10      ;===================================
+                                    2-  11      ;常数定义
+                                    2-  12      
+                                    2-  13      
+                                    2-  14      
+                                    2-  15      
+                                    2-  16      ;===================================
+                                    2-  17      ;寄存器定义
+                 10                 2-  18      acc_temp		equ	0x10
+                 11                 2-  19      status_temp		equ	0x11
+                                    2-  20      
+                 12                 2-  21      flag1			equ	0x12
+                 13                 2-  22      flag2			equ	0x13
+                                    2-  23      
+                 14                 2-  24      key_cur			equ	0x14
+                 15                 2-  25      key_per			equ	0x15
+                 16                 2-  26      key_down		equ	0x16
+                 17                 2-  27      key_keep		equ	0x17
+                                    2-  28      
+                 18                 2-  29      Delay_1			equ	0x18
+                 19                 2-  30      Delay_2			equ	0x19
+                 1A                 2-  31      Delay_3			equ	0x1a
+                 1B                 2-  32      int_time1		equ	0x1b
+                 1C                 2-  33      int_time2		equ	0x1c
+                 1D                 2-  34      sleep_time		equ	0x1d
+                                    2-  35      
+                 20                 2-  36      long_mode		equ	0x20
+                 21                 2-  37      long_time		equ	0x21
+                 22                 2-  38      mode			equ	0x22
+                 23                 2-  39      out_time		equ	0x23
+                 24                 2-  40      out_on_buf		equ	0x24
+                 25                 2-  41      out_buf			equ	0x25
+                 26                 2-  42      R_PCON1			equ	0x26
+                                    2-  43      
+                 28                 2-  44      temp1			equ	0x28
+                 29                 2-  45      temp2			equ	0x29
+                                    2-  46      
+                 30                 2-  47      cnt				equ	0x30
+                 31                 2-  48      dat1			equ	0x31
+                 32                 2-  49      dat2			equ	0x32
+                 33                 2-  50      dat3			equ	0x33
+                 34                 2-  51      xdat1			equ	0x34
+                 35                 2-  52      xdat2			equ	0x35
+                 36                 2-  53      xdat3			equ	0x36
+                                    2-  54      
+                                    2-  55      ;===================================
+                                    2-  56      ;标志位定义
+                                    2-  57      ;flag1
+                                    2-  58      #define		T_flag	flag1,0
+                                    2-  59      #define		ON_flag	flag1,1
+                                    2-  60      
+                                    2-  61      ;flag2
+                                    2-  62      #define		T2_flag	flag2,0
+                                    0-  17      #include		Initialize.asm
+                                    3-   1      ;Initialize_GPIO
+                                    3-   2      ;Initialize_Timer0
+                                    3-   3      ;Initialize_Timer1
+                                    3-   4      ;Initialize_FSR
+                                    3-   5      ;Delay_nus
+                                    3-   6      
+                                    3-   7      ;=================================
+                                    3-   8      ;初始化IO
+                 10                 3-   9      Initialize_GPIO:
+                                    3-  10      ;movia   C_PB5_OD | C_PB4_OD
+                                    3-  11      ;iost    BODCON					; Enable Open-Drain
+                                    3-  12      
+                                    3-  13      ;movia   ~( C_PB3_PLB |  C_PB2_PLB |  C_PB1_PLB |  C_PB0_PLB)
+                                    3-  14      ;movar   BPLCON					; Enable Pull-Low Resistor
+                                    3-  15      
+   000010 21D7                      3-  16      movia   ~( C_PB5_PHB | C_PB3_PHB)
+   000011 008C                      3-  17      movar    BPHCON					; Enable Pull-High Resistor
+                                    3-  18      
+   000012 2128                      3-  19      movia	0x28
+   000013 0089                      3-  20      movar	BWUCON
+                                    3-  21      
+                                    3-  22      ; PORTB I/O state
+   000014 2128                      3-  23      movia   C_PB5_Input | C_PB3_Input
+   000015 0006                      3-  24      iost    IOSTB					; 1=input	0=output
+                                    3-  25      
+   000016 2100                      3-  26      movia   0x00
+   000017 0086                      3-  27      movar   Pr_PB_Data
+                                    3-  28      
+                                    3-  29      
+                                    3-  30      ;movia	0xA0
+                                    3-  31      ;movar	PCON
+                                    3-  32      ;bsr		PCON,5
+                                    3-  33      ;movia	C_LVD_3P0V
+                                    3-  34      ;iost	PCON1
+                                    3-  35      
+                                    3-  36      ;bsr		INTE,C_INT_LVD_Bit	;LVD中断
+   000018 0010                      3-  37      ret
+                                    3-  38      
+                                    3-  39      ;=================================
+                                    3-  40      ;初始化定时器0
+                                    3-  41      ;Timer0=Tcpu*分频*（256-TMR0）
+                 84                 3-  42      TMR0_Temp	=	132
+                                    3-  43      ;Timer0=1us*8*（256-132）=1006US
+                 19                 3-  44      Initialize_Timer0:
+   000019 2184                      3-  45      movia	TMR0_Temp
+   00001A 0081                      3-  46      movar	TMR0
+                                    3-  47      
+                                    3-  48      ;movia	C_TMR0_LowClk | C_TMR0_Clk | C_PS0_Div8 ;外部晶振
+   00001B 2102                      3-  49      movia	C_PS0_TMR0 | C_PS0_Div8
+   00001C 0003                      3-  50      t0md
+                                    3-  51      
+   00001D 180E                      3-  52      bsr		INTE,C_INT_TMR0_Bit
+   00001E 0010                      3-  53      ret
+                                    3-  54      
+                                    3-  55      ;=================================
+                                    3-  56      ;初始化定时器1
+                                    3-  57      ;Timer1=Tcpu*分频*TMR1
+                 1F                 3-  58      Initialize_Timer1:
+   00001F 21C7                      3-  59      movia   199
+   000020 0020                      3-  60      sfun    TMR1                   ; Load 0xFF to TMR1 (Initial Timer1 register)
+                                    3-  61      
+   000021 2103                      3-  62      movia   C_TMR1_Reload | C_TMR1_En
+   000022 0021                      3-  63      sfun    T1CR1                   ; Enable Timer1, Initial value reloaded from TMR1, Non-stop mode
+                                    3-  64      
+   000023 2102                      3-  65      movia   C_TMR1_ClkSrc_Inst | C_PS1_Div8
+   000024 0022                      3-  66      sfun    T1CR2                   ; Enable Prescaler1, Prescaler1 dividing rate = 1:4, Timer1 clock source is instruction clock
+                                    3-  67      
+   000025 198E                      3-  68      bsr		INTE,C_INT_TMR1_Bit
+   000026 0010                      3-  69      ret
+                                    3-  70      
+                                    3-  71      ;=================================
+                                    3-  72      ;清SRAM
+                 27                 3-  73      Initialize_FSR:
+   000027 2110                      3-  74      movia	0x10
+   000028 0084                      3-  75      movar	fsr
+                 29                 3-  76      Initialize_FSR1:
+   000029 0280                      3-  77      clrr	indf
+   00002A 0584                      3-  78      incr	fsr,r
+   00002B 0104                      3-  79      movr	fsr,a
+   00002C 243F                      3-  80      xoria	0x3F
+   00002D 0903                      3-  81      btrss	status,z
+   00002E 3829                      3-  82      lgoto	Initialize_FSR1
+   00002F 0010                      3-  83      ret
+                                    3-  84      
+                                    0-  18      #include		function.asm
+                                    4-   1      ;Sleep_Work
+                                    4-   2      ;Delay_nus
+                                    4-   3      
+                                    4-   4      
+                                    4-   5      ;==============================================
+                 30                 4-   6      Sleep_Work:
+   000030 0C92                      4-   7      btrsc	on_flag
+   000031 384F                      4-   8      lgoto	Sleep_ret
+   000032 0A86                      4-   9      btrss	pb,key1
+   000033 384F                      4-  10      lgoto	Sleep_ret
+   000034 0986                      4-  11      btrss	pb,key2
+   000035 384F                      4-  12      lgoto	Sleep_ret
+                                    4-  13      
+   000036 059D                      4-  14      incr	sleep_time,r
+   000037 011D                      4-  15      movr	sleep_time,a
+   000038 240A                      4-  16      xoria	10
+   000039 0903                      4-  17      btrss	status	,z
+   00003A 0010                      4-  18      ret
+   00003B 029D                      4-  19      clrr	sleep_time	;20ms*10=200ms
+                                    4-  20      
+   00003C 0013                      4-  21      disi
+                                    4-  22      
+   00003D 2100                      4-  23      MOVIA		0x00
+   00003E 0088                      4-  24      MOVAR		PCON
+   00003F 2102                      4-  25      MOVIA		0x02
+   000040 008E                      4-  26      MOVAR		INTE
+   000041 2100                      4-  27      MOVIA		0x00
+   000042 008F                      4-  28      MOVAR		INTF
+                                    4-  29      
+   000043 0000                      4-  30      NOP
+   000044 0000                      4-  31      NOP
+   000045 0001                      4-  32      SLEEP
+   000046 0000                      4-  33      NOP
+   000047 0000                      4-  34      NOP
+   000048 2100                      4-  35      MOVIA		0x00
+   000049 008F                      4-  36      MOVAR		INTF
+   00004A 2188                      4-  37      MOVIA		0x88
+   00004B 0088                      4-  38      MOVAR		PCON
+                                    4-  39      ;MOVIA		0x01
+                                    4-  40      ;MOVAR		INTE
+   00004C 1C8E                      4-  41      bcr		INTE,C_INT_PBKey_Bit	;禁止IO中断
+                                    4-  42      ;bsr		INTE,C_INT_TMR0_Bit
+   00004D 198E                      4-  43      bsr		INTE,C_INT_TMR1_Bit
+                                    4-  44      
+                                    4-  45      ;MOVIA		0xA8	;开启LVD
+                                    4-  46      ;MOVAR		PCON
+                                    4-  47      ;lcall	initialize_io
+   00004E 0004                      4-  48      ENI
+                                    4-  49      
+                 4F                 4-  50      Sleep_ret:
+   00004F 029D                      4-  51      clrr	sleep_time
+   000050 0010                      4-  52      ret
+                                    4-  53      
+                                    4-  54      ;==================================
+                 51                 4-  55      Delay_nus:
+   000051 0098                      4-  56      movar	Delay_1
+                                    4-  57      
+   000052 1798                      4-  58      decrsz	Delay_1,r
+   000053 3852                      4-  59      lgoto	$-1
+   000054 0010                      4-  60      ret
+                                    0-  19      
+                                    0-  20      ;--------------- Code Start -----------------------------------------------
+                                    0-  21      ;--------------------------------------------------------------------------
+                 55                 0-  22      V_Main:
+   000055 2810                      0-  23      Lcall	Initialize_GPIO
+   000056 2827                      0-  24      Lcall	Initialize_FSR
+                                    0-  25      ;Lcall	Initialize_Timer0
+   000057 281F                      0-  26      Lcall	Initialize_Timer1
+   000058 0004                      0-  27      eni
+                                    0-  28      
+   000059 2100                      0-  29      movia	0
+   00005A 00B4                      0-  30      movar	xdat1
+   00005B 2100                      0-  31      movia	0
+   00005C 00B5                      0-  32      movar	xdat2
+   00005D 2100                      0-  33      movia	0
+   00005E 00B6                      0-  34      movar	xdat3
+                                    0-  35      ;--------------------------------------------------------------
+                 5F                 0-  36      L_MainLoop:
+   00005F 0002                      0-  37      clrwdt                  ; Clear WatchDog
+                                    0-  38      
+                                    0-  39      
+                                    0-  40      
+   000060 0812                      0-  41      btrss	T_flag
+   000061 385F                      0-  42      lgoto	L_MainLoop
+   000062 1C12                      0-  43      bcr		T_flag			;100us
+                                    0-  44      
+   000063 0892                      0-  45      btrss	ON_flag
+   000064 2873                      0-  46      Lcall	Send_data2
+   000065 1892                      0-  47      bsr		ON_flag
+                                    0-  48      
+   000066 059B                      0-  49      incr	int_time1,r
+   000067 011B                      0-  50      movr	int_time1,a
+   000068 24C8                      0-  51      xoria	200
+   000069 0903                      0-  52      btrss	status,z
+   00006A 385F                      0-  53      lgoto	L_MainLoop
+   00006B 029B                      0-  54      clrr	int_time1		;20ms
+                                    0-  55      
+   00006C 1C92                      0-  56      bcr		ON_flag
+   00006D 05B5                      0-  57      incr	xdat2,r
+   00006E 0135                      0-  58      movr	xdat2,a
+   00006F 24FF                      0-  59      xoria	255
+   000070 0903                      0-  60      btrss	status,z
+   000071 385F                      0-  61      lgoto	L_MainLoop
+                                    0-  62      
+   000072 385F                      0-  63      lgoto	L_MainLoop
+                                    0-  64      
+                 73                 0-  65      Send_data2:
+   000073 0134                      0-  66      movr	xdat1,a
+   000074 00B1                      0-  67      movar	dat1
+   000075 0135                      0-  68      movr	xdat2,a
+   000076 00B2                      0-  69      movar	dat2
+   000077 0136                      0-  70      movr	xdat3,a
+   000078 00B3                      0-  71      movar	dat3
+   000079 2118                      0-  72      movia	24
+   00007A 00B0                      0-  73      movar	cnt
+                                    0-  74      
+                 7B                 0-  75      Send_data21:
+   00007B 1C06                      0-  76      bcr		portb,0
+   00007C 0FB1                      0-  77      btrsc	dat1,7
+   00007D 3887                      0-  78      lgoto	Send_data22
+                                    0-  79      
+   00007E 1806                      0-  80      bsr		portb,0
+   00007F 14B3                      0-  81      rlr		dat3,r
+   000080 14B2                      0-  82      rlr		dat2,r
+   000081 1C06                      0-  83      bcr		portb,0
+   000082 14B1                      0-  84      rlr		dat1,r
+                                    0-  85      
+   000083 17B0                      0-  86      decrsz	cnt,r
+   000084 387B                      0-  87      lgoto	Send_data21
+   000085 1C06                      0-  88      bcr		portb,0
+   000086 0010                      0-  89      ret
+                                    0-  90      
+                 87                 0-  91      Send_data22:
+   000087 1806                      0-  92      bsr		portb,0
+   000088 14B3                      0-  93      rlr		dat3,r
+   000089 14B2                      0-  94      rlr		dat2,r
+   00008A 14B1                      0-  95      rlr		dat1,r
+   00008B 0000                      0-  96      nop
+   00008C 0000                      0-  97      nop
+   00008D 17B0                      0-  98      decrsz	cnt,r
+   00008E 387B                      0-  99      lgoto	Send_data21
+   00008F 1C06                      0- 100      bcr		portb,0
+   000090 0010                      0- 101      ret
+                                    0- 102      
+                                    0- 103      
+                 91                 0- 104      Send_data211:
+   000091 1C06                      0- 105      bcr		portb,0
+   000092 0BB1                      0- 106      btrss	dat1,7
+   000093 3887                      0- 107      lgoto	Send_data22
+                                    0- 108      
+   000094 1806                      0- 109      bsr		portb,0
+   000095 14B3                      0- 110      rlr		dat3,r
+   000096 14B2                      0- 111      rlr		dat2,r
+   000097 14B1                      0- 112      rlr		dat1,r
+   000098 0000                      0- 113      nop
+   000099 0000                      0- 114      nop
+   00009A 17B0                      0- 115      decrsz	cnt,r
+   00009B 387B                      0- 116      lgoto	Send_data21
+   00009C 1C06                      0- 117      bcr		portb,0
+   00009D 0010                      0- 118      ret
+                                    0- 119      
+                 9E                 0- 120      Send_data221:
+   00009E 1806                      0- 121      bsr		portb,0
+   00009F 14B3                      0- 122      rlr		dat3,r
+   0000A0 14B2                      0- 123      rlr		dat2,r
+   0000A1 1C06                      0- 124      bcr		portb,0
+   0000A2 14B1                      0- 125      rlr		dat1,r
+   0000A3 17B0                      0- 126      decrsz	cnt,r
+   0000A4 387B                      0- 127      lgoto	Send_data21
+   0000A5 1C06                      0- 128      bcr		portb,0
+   0000A6 0010                      0- 129      ret
+                                    0- 130      
+                 A7                 0- 131      Send_data:
+   0000A7 1806                      0- 132      bsr		portb,0
+   0000A8 38A9                      0- 133      lgoto	$+1
+   0000A9 38AA                      0- 134      lgoto	$+1
+   0000AA 38AB                      0- 135      lgoto	$+1
+   0000AB 38AC                      0- 136      lgoto	$+1
+   0000AC 1C06                      0- 137      bcr		portb,0
+   0000AD 38AE                      0- 138      lgoto	$+1
+                                    0- 139      
+   0000AE 1806                      0- 140      bsr		portb,0
+   0000AF 38B0                      0- 141      lgoto	$+1
+   0000B0 38B1                      0- 142      lgoto	$+1
+   0000B1 38B2                      0- 143      lgoto	$+1
+   0000B2 38B3                      0- 144      lgoto	$+1
+   0000B3 1C06                      0- 145      bcr		portb,0
+   0000B4 38B5                      0- 146      lgoto	$+1
+                                    0- 147      
+   0000B5 1806                      0- 148      bsr		portb,0
+   0000B6 38B7                      0- 149      lgoto	$+1
+   0000B7 38B8                      0- 150      lgoto	$+1
+   0000B8 38B9                      0- 151      lgoto	$+1
+   0000B9 38BA                      0- 152      lgoto	$+1
+   0000BA 1C06                      0- 153      bcr		portb,0
+   0000BB 38BC                      0- 154      lgoto	$+1
+                                    0- 155      
+   0000BC 1806                      0- 156      bsr		portb,0
+   0000BD 38BE                      0- 157      lgoto	$+1
+   0000BE 38BF                      0- 158      lgoto	$+1
+   0000BF 38C0                      0- 159      lgoto	$+1
+   0000C0 38C1                      0- 160      lgoto	$+1
+   0000C1 1C06                      0- 161      bcr		portb,0
+   0000C2 38C3                      0- 162      lgoto	$+1
+                                    0- 163      
+   0000C3 1806                      0- 164      bsr		portb,0
+   0000C4 38C5                      0- 165      lgoto	$+1
+   0000C5 38C6                      0- 166      lgoto	$+1
+   0000C6 38C7                      0- 167      lgoto	$+1
+   0000C7 38C8                      0- 168      lgoto	$+1
+   0000C8 1C06                      0- 169      bcr		portb,0
+   0000C9 38CA                      0- 170      lgoto	$+1
+                                    0- 171      
+   0000CA 1806                      0- 172      bsr		portb,0
+   0000CB 38CC                      0- 173      lgoto	$+1
+   0000CC 38CD                      0- 174      lgoto	$+1
+   0000CD 38CE                      0- 175      lgoto	$+1
+   0000CE 38CF                      0- 176      lgoto	$+1
+   0000CF 1C06                      0- 177      bcr		portb,0
+   0000D0 38D1                      0- 178      lgoto	$+1
+                                    0- 179      
+   0000D1 1806                      0- 180      bsr		portb,0
+   0000D2 38D3                      0- 181      lgoto	$+1
+   0000D3 38D4                      0- 182      lgoto	$+1
+   0000D4 38D5                      0- 183      lgoto	$+1
+   0000D5 38D6                      0- 184      lgoto	$+1
+   0000D6 1C06                      0- 185      bcr		portb,0
+   0000D7 38D8                      0- 186      lgoto	$+1
+                                    0- 187      
+   0000D8 1806                      0- 188      bsr		portb,0
+   0000D9 38DA                      0- 189      lgoto	$+1
+   0000DA 38DB                      0- 190      lgoto	$+1
+   0000DB 38DC                      0- 191      lgoto	$+1
+   0000DC 38DD                      0- 192      lgoto	$+1
+   0000DD 1C06                      0- 193      bcr		portb,0
+   0000DE 38DF                      0- 194      lgoto	$+1
+                                    0- 195      ;
+   0000DF 1806                      0- 196      bsr		portb,0
+   0000E0 38E1                      0- 197      lgoto	$+1
+   0000E1 1C06                      0- 198      bcr		portb,0
+   0000E2 38E3                      0- 199      lgoto	$+1
+   0000E3 38E4                      0- 200      lgoto	$+1
+   0000E4 38E5                      0- 201      lgoto	$+1
+   0000E5 38E6                      0- 202      lgoto	$+1
+                                    0- 203      
+   0000E6 1806                      0- 204      bsr		portb,0
+   0000E7 38E8                      0- 205      lgoto	$+1
+   0000E8 1C06                      0- 206      bcr		portb,0
+   0000E9 38EA                      0- 207      lgoto	$+1
+   0000EA 38EB                      0- 208      lgoto	$+1
+   0000EB 38EC                      0- 209      lgoto	$+1
+   0000EC 38ED                      0- 210      lgoto	$+1
+                                    0- 211      
+   0000ED 1806                      0- 212      bsr		portb,0
+   0000EE 38EF                      0- 213      lgoto	$+1
+   0000EF 1C06                      0- 214      bcr		portb,0
+   0000F0 38F1                      0- 215      lgoto	$+1
+   0000F1 38F2                      0- 216      lgoto	$+1
+   0000F2 38F3                      0- 217      lgoto	$+1
+   0000F3 38F4                      0- 218      lgoto	$+1
+                                    0- 219      
+   0000F4 1806                      0- 220      bsr		portb,0
+   0000F5 38F6                      0- 221      lgoto	$+1
+   0000F6 1C06                      0- 222      bcr		portb,0
+   0000F7 38F8                      0- 223      lgoto	$+1
+   0000F8 38F9                      0- 224      lgoto	$+1
+   0000F9 38FA                      0- 225      lgoto	$+1
+   0000FA 38FB                      0- 226      lgoto	$+1
+                                    0- 227      
+   0000FB 1806                      0- 228      bsr		portb,0
+   0000FC 38FD                      0- 229      lgoto	$+1
+   0000FD 1C06                      0- 230      bcr		portb,0
+   0000FE 38FF                      0- 231      lgoto	$+1
+   0000FF 3900                      0- 232      lgoto	$+1
+   000100 3901                      0- 233      lgoto	$+1
+   000101 3902                      0- 234      lgoto	$+1
+                                    0- 235      
+   000102 1806                      0- 236      bsr		portb,0
+   000103 3904                      0- 237      lgoto	$+1
+   000104 1C06                      0- 238      bcr		portb,0
+   000105 3906                      0- 239      lgoto	$+1
+   000106 3907                      0- 240      lgoto	$+1
+   000107 3908                      0- 241      lgoto	$+1
+   000108 3909                      0- 242      lgoto	$+1
+                                    0- 243      
+   000109 1806                      0- 244      bsr		portb,0
+   00010A 390B                      0- 245      lgoto	$+1
+   00010B 1C06                      0- 246      bcr		portb,0
+   00010C 390D                      0- 247      lgoto	$+1
+   00010D 390E                      0- 248      lgoto	$+1
+   00010E 390F                      0- 249      lgoto	$+1
+   00010F 3910                      0- 250      lgoto	$+1
+                                    0- 251      
+   000110 1806                      0- 252      bsr		portb,0
+   000111 3912                      0- 253      lgoto	$+1
+   000112 1C06                      0- 254      bcr		portb,0
+   000113 3914                      0- 255      lgoto	$+1
+   000114 3915                      0- 256      lgoto	$+1
+   000115 3916                      0- 257      lgoto	$+1
+   000116 3917                      0- 258      lgoto	$+1
+                                    0- 259      
+                                    0- 260      ;
+   000117 1806                      0- 261      bsr		portb,0
+   000118 3919                      0- 262      lgoto	$+1
+   000119 1C06                      0- 263      bcr		portb,0
+   00011A 391B                      0- 264      lgoto	$+1
+   00011B 391C                      0- 265      lgoto	$+1
+   00011C 391D                      0- 266      lgoto	$+1
+   00011D 391E                      0- 267      lgoto	$+1
+                                    0- 268      
+   00011E 1806                      0- 269      bsr		portb,0
+   00011F 3920                      0- 270      lgoto	$+1
+   000120 1C06                      0- 271      bcr		portb,0
+   000121 3922                      0- 272      lgoto	$+1
+   000122 3923                      0- 273      lgoto	$+1
+   000123 3924                      0- 274      lgoto	$+1
+   000124 3925                      0- 275      lgoto	$+1
+                                    0- 276      
+   000125 1806                      0- 277      bsr		portb,0
+   000126 3927                      0- 278      lgoto	$+1
+   000127 1C06                      0- 279      bcr		portb,0
+   000128 3929                      0- 280      lgoto	$+1
+   000129 392A                      0- 281      lgoto	$+1
+   00012A 392B                      0- 282      lgoto	$+1
+   00012B 392C                      0- 283      lgoto	$+1
+                                    0- 284      
+   00012C 1806                      0- 285      bsr		portb,0
+   00012D 392E                      0- 286      lgoto	$+1
+   00012E 1C06                      0- 287      bcr		portb,0
+   00012F 3930                      0- 288      lgoto	$+1
+   000130 3931                      0- 289      lgoto	$+1
+   000131 3932                      0- 290      lgoto	$+1
+   000132 3933                      0- 291      lgoto	$+1
+                                    0- 292      
+   000133 1806                      0- 293      bsr		portb,0
+   000134 3935                      0- 294      lgoto	$+1
+   000135 1C06                      0- 295      bcr		portb,0
+   000136 3937                      0- 296      lgoto	$+1
+   000137 3938                      0- 297      lgoto	$+1
+   000138 3939                      0- 298      lgoto	$+1
+   000139 393A                      0- 299      lgoto	$+1
+                                    0- 300      
+   00013A 1806                      0- 301      bsr		portb,0
+   00013B 393C                      0- 302      lgoto	$+1
+   00013C 1C06                      0- 303      bcr		portb,0
+   00013D 393E                      0- 304      lgoto	$+1
+   00013E 393F                      0- 305      lgoto	$+1
+   00013F 3940                      0- 306      lgoto	$+1
+   000140 3941                      0- 307      lgoto	$+1
+                                    0- 308      
+   000141 1806                      0- 309      bsr		portb,0
+   000142 3943                      0- 310      lgoto	$+1
+   000143 1C06                      0- 311      bcr		portb,0
+   000144 3945                      0- 312      lgoto	$+1
+   000145 3946                      0- 313      lgoto	$+1
+   000146 3947                      0- 314      lgoto	$+1
+   000147 3948                      0- 315      lgoto	$+1
+                                    0- 316      
+   000148 1806                      0- 317      bsr		portb,0
+   000149 394A                      0- 318      lgoto	$+1
+   00014A 1C06                      0- 319      bcr		portb,0
+   00014B 394C                      0- 320      lgoto	$+1
+   00014C 394D                      0- 321      lgoto	$+1
+   00014D 394E                      0- 322      lgoto	$+1
+   00014E 394F                      0- 323      lgoto	$+1
+   00014F 0010                      0- 324      ret
+                                    0- 325      ;decr
+                                    0- 326      ;========================================
+                                    0- 327      ;按键扫描
+                150                 0- 328      Scan_key:
+   000150 0114                      0- 329      movr	key_cur,a
+   000151 0095                      0- 330      movar	key_per
+   000152 0706                      0- 331      comr	pb,a
+   000153 2228                      0- 332      andia	0x28
+   000154 0094                      0- 333      movar	key_cur
+                                    0- 334      ;-------------按下有效----------------
+   000155 0715                      0- 335      comr	key_per,a
+   000156 1014                      0- 336      andar	key_cur,a
+   000157 0096                      0- 337      movar	key_down
+                                    0- 338      
+                                    0- 339      ;-------------长按有效----------------
+   000158 0114                      0- 340      movr	key_cur,a
+   000159 1015                      0- 341      andar	key_per,a
+   00015A 0097                      0- 342      movar	key_keep
+                                    0- 343      
+   00015B 295D                      0- 344      Lcall	long_key
+   00015C 0010                      0- 345      ret
+                                    0- 346      
+                                    0- 347      ;==============================
+                15D                 0- 348      long_key:
+   00015D 0120                      0- 349      movr	long_mode,a
+   00015E 0382                      0- 350      addar	pcl,r
+   00015F 3962                      0- 351      lgoto	long_key_0
+   000160 3967                      0- 352      lgoto	long_key_1
+   000161 3972                      0- 353      lgoto	long_key_2
+                                    0- 354      
+                                    0- 355      ;----------------
+                162                 0- 356      long_key_0:
+   000162 0A96                      0- 357      btrss	key_down,key1
+   000163 0010                      0- 358      ret
+                                    0- 359      
+   000164 02A1                      0- 360      clrr	long_time
+   000165 05A0                      0- 361      incr	long_mode,r
+   000166 0010                      0- 362      ret
+                                    0- 363      
+                                    0- 364      ;
+                167                 0- 365      long_key_1:
+   000167 0A97                      0- 366      btrss	key_keep,key1
+   000168 3970                      0- 367      lgoto	long_key_12
+                                    0- 368      
+   000169 05A1                      0- 369      incr	long_time,r
+   00016A 0121                      0- 370      movr	long_time,a
+   00016B 2496                      0- 371      xoria	150
+   00016C 0903                      0- 372      btrss	status,z
+   00016D 0010                      0- 373      ret
+   00016E 05A0                      0- 374      incr	long_mode,r
+                                    0- 375      
+                                    0- 376      
+   00016F 0010                      0- 377      ret
+                                    0- 378      
+                170                 0- 379      long_key_12:
+   000170 02A0                      0- 380      clrr	long_mode
+   000171 0010                      0- 381      ret
+                                    0- 382      
+                                    0- 383      ;
+                172                 0- 384      long_key_2:
+   000172 0A97                      0- 385      btrss	key_keep,key1
+   000173 02A0                      0- 386      clrr	long_mode
+   000174 0010                      0- 387      ret
+                                    0- 388      
+                                    0- 389      
+                                    0- 390      
+                                    0- 391      ;--------------- Interrupt Service Routine --------------------------------
+                                    0- 392      ;--------------------------------------------------------------------------
+                175                 0- 393      V_INT:
+   000175 0090                      0- 394      movar	acc_temp
+   000176 1503                      0- 395      swapr	status,a
+   000177 0091                      0- 396      movar	status_temp
+                                    0- 397      
+                                    0- 398      ;btrss	INTF,C_INT_LVD_Bit
+                                    0- 399      ;lgoto	TIME1_INT
+                                    0- 400      
+                                    0- 401      ;movia   ~C_INT_LVD
+                                    0- 402      ;movar	INTF
+                                    0- 403      
+                                    0- 404      ;bcr		on_flag
+                                    0- 405      ;;movia	0x1f
+                                    0- 406      ;movar	portb
+                                    0- 407      ;movia	0x0f
+                                    0- 408      ;xorar	portb,r
+                                    0- 409      
+                178                 0- 410      TIME1_INT:
+   000178 098F                      0- 411      btrss	INTF,C_INT_TMR1_Bit
+   000179 397D                      0- 412      lgoto	V_retie
+                                    0- 413      
+   00017A 21F7                      0- 414      movia   ~C_INT_TMR1
+   00017B 008F                      0- 415      movar	INTF
+                                    0- 416      
+                                    0- 417      ;movia	0x0f
+                                    0- 418      ;xorar	portb,r
+   00017C 1812                      0- 419      bsr		T_flag
+                                    0- 420      
+                17D                 0- 421      V_retie:
+   00017D 1511                      0- 422      swapr	status_temp,a
+   00017E 0083                      0- 423      movar	status
+   00017F 1590                      0- 424      swapr	acc_temp,r
+   000180 1510                      0- 425      swapr	acc_temp,a
+   000181 0011                      0- 426      retie                           ; Return from interrupt and enable interrupt globally
+                                    0- 427      
+                                    0- 428      end                                     ; End of Code
+
+NYASM 2.42 [Build 240221.00]  File=C:\Users\Administrator\Desktop\NY8A051F\Program\main.asm Date=2024-05-31 18:14:23
+
+SYMBOL TABLE            TYPE     VALUE
+
+__8A051F                Constant 00000001
+__PIN_COUNT__           Constant 00000006
+__PROCESSOR__           Constant 00800515
+A                       Constant 00000000
+ACC_TEMP                Constant 00000010
+BODCON                  Constant 0000000C
+BPHCON                  Constant 0000000C
+BPLCON                  Constant 0000000B
+BWUCON                  Constant 00000009
+BZ1CR                   Constant 00000005
+C                       Constant 00000000
+C_ALL_INT_EN            Constant 00000080
+C_BIT0                  Constant 00000001
+C_BIT1                  Constant 00000002
+C_BIT2                  Constant 00000004
+C_BIT3                  Constant 00000008
+C_BIT4                  Constant 00000010
+C_BIT5                  Constant 00000020
+C_BIT6                  Constant 00000040
+C_BIT7                  Constant 00000080
+C_BZ1_EN                Constant 00000080
+C_BZ1_FSEL              Constant 0000000F
+C_BZ1_PS1DIV128         Constant 00000006
+C_BZ1_PS1DIV16          Constant 00000003
+C_BZ1_PS1DIV2           Constant 00000000
+C_BZ1_PS1DIV256         Constant 00000007
+C_BZ1_PS1DIV32          Constant 00000004
+C_BZ1_PS1DIV4           Constant 00000001
+C_BZ1_PS1DIV64          Constant 00000005
+C_BZ1_PS1DIV8           Constant 00000002
+C_BZ1_TMR1B0            Constant 00000008
+C_BZ1_TMR1B1            Constant 00000009
+C_BZ1_TMR1B2            Constant 0000000A
+C_BZ1_TMR1B3            Constant 0000000B
+C_BZ1_TMR1B4            Constant 0000000C
+C_BZ1_TMR1B5            Constant 0000000D
+C_BZ1_TMR1B6            Constant 0000000E
+C_BZ1_TMR1B7            Constant 0000000F
+C_EXINT_EDGE            Constant 00000040
+C_EXTINT_EN             Constant 00000040
+C_FHOSC_SEL             Constant 00000001
+C_FHOSC_STOP            Constant 00000002
+C_FLOSC_SEL             Constant 00000000
+C_HALT_MODE             Constant 00000004
+C_INDIR_ADDR            Constant 000000FF
+C_INT_EXT               Constant 00000004
+C_INT_EXT_BIT           Constant 00000002
+C_INT_LVD               Constant 00000010
+C_INT_LVD_BIT           Constant 00000004
+C_INT_PBKEY             Constant 00000002
+C_INT_PBKEY_BIT         Constant 00000001
+C_INT_TMR0              Constant 00000001
+C_INT_TMR0_BIT          Constant 00000000
+C_INT_TMR1              Constant 00000008
+C_INT_TMR1_BIT          Constant 00000003
+C_INT_WDT               Constant 00000040
+C_INT_WDT_BIT           Constant 00000006
+C_IR_38K                Constant 00000000
+C_IR_57K                Constant 00000002
+C_IR_EN                 Constant 00000001
+C_IR_POL_SEL            Constant 00000004
+C_LVD_2P0V              Constant 00000000
+C_LVD_2P2V              Constant 00000004
+C_LVD_2P4V              Constant 00000008
+C_LVD_2P8V              Constant 0000000C
+C_LVD_2P9V              Constant 00000010
+C_LVD_3P0V              Constant 00000014
+C_LVD_3P3V              Constant 00000018
+C_LVD_3P6V              Constant 0000001C
+C_LVD_3P95V             Constant 00000024
+C_LVD_4P05V             Constant 0000002C
+C_LVD_4P15V             Constant 0000003C
+C_LVD_EN                Constant 00000020
+C_LVDOUT                Constant 00000040
+C_LVR_EN                Constant 00000008
+C_MODE                  Constant 0000000C
+C_NORMAL_MODE           Constant 00000000
+C_NUM0                  Constant 00000000
+C_NUM1                  Constant 00000001
+C_NUM2                  Constant 00000002
+C_NUM3                  Constant 00000003
+C_NUM4                  Constant 00000004
+C_NUM5                  Constant 00000005
+C_NUM6                  Constant 00000006
+C_NUM7                  Constant 00000007
+C_PB0_DATA              Constant 00000001
+C_PB0_INPUT             Constant 00000001
+C_PB0_OD                Constant 00000001
+C_PB0_OUTPUT            Constant 00000000
+C_PB0_PHB               Constant 00000001
+C_PB0_PLB               Constant 00000010
+C_PB0_WAKEUP            Constant 00000001
+C_PB1_DATA              Constant 00000002
+C_PB1_INPUT             Constant 00000002
+C_PB1_OD                Constant 00000002
+C_PB1_OUTPUT            Constant 00000000
+C_PB1_PHB               Constant 00000002
+C_PB1_PLB               Constant 00000020
+C_PB1_WAKEUP            Constant 00000002
+C_PB2_DATA              Constant 00000004
+C_PB2_INPUT             Constant 00000004
+C_PB2_OD                Constant 00000004
+C_PB2_OUTPUT            Constant 00000000
+C_PB2_PHB               Constant 00000004
+C_PB2_PLB               Constant 00000040
+C_PB2_WAKEUP            Constant 00000004
+C_PB3_DATA              Constant 00000008
+C_PB3_INPUT             Constant 00000008
+C_PB3_OUTPUT            Constant 00000000
+C_PB3_PHB               Constant 00000008
+C_PB3_PLB               Constant 00000080
+C_PB3_WAKEUP            Constant 00000008
+C_PB4_DATA              Constant 00000010
+C_PB4_INPUT             Constant 00000010
+C_PB4_OD                Constant 00000010
+C_PB4_OUTPUT            Constant 00000000
+C_PB4_PHB               Constant 00000010
+C_PB4_WAKEUP            Constant 00000010
+C_PB5_DATA              Constant 00000020
+C_PB5_INPUT             Constant 00000020
+C_PB5_OD                Constant 00000020
+C_PB5_OUTPUT            Constant 00000000
+C_PB5_PHB               Constant 00000020
+C_PB5_WAKEUP            Constant 00000020
+C_PB_DATA               Constant 0000003F
+C_PB_INPUT              Constant 0000003F
+C_PB_OD                 Constant 00000037
+C_PB_OUTPUT             Constant 00000000
+C_PB_PHB                Constant 0000003F
+C_PB_PLB                Constant 000000F0
+C_PB_WAKEUP             Constant 0000003F
+C_PCHIGH_DATA           Constant 00000003
+C_PCLOW_DATA            Constant 000000FF
+C_PS0_CNT               Constant 000000FF
+C_PS0_DIV               Constant 00000007
+C_PS0_DIV128            Constant 00000006
+C_PS0_DIV16             Constant 00000003
+C_PS0_DIV2              Constant 00000000
+C_PS0_DIV256            Constant 00000007
+C_PS0_DIV32             Constant 00000004
+C_PS0_DIV4              Constant 00000001
+C_PS0_DIV64             Constant 00000005
+C_PS0_DIV8              Constant 00000002
+C_PS0_TMR0              Constant 00000000
+C_PS0_WDT               Constant 00000008
+C_PS1_CNT               Constant 000000FF
+C_PS1_DIS               Constant 00000008
+C_PS1_DIV               Constant 00000007
+C_PS1_DIV128            Constant 00000006
+C_PS1_DIV16             Constant 00000003
+C_PS1_DIV2              Constant 00000000
+C_PS1_DIV256            Constant 00000007
+C_PS1_DIV32             Constant 00000004
+C_PS1_DIV4              Constant 00000001
+C_PS1_DIV64             Constant 00000005
+C_PS1_DIV8              Constant 00000002
+C_PS1_EN                Constant 00000000
+C_PWM1_ACTIVE           Constant 00000040
+C_PWM1_ACTIVE_HI        Constant 00000000
+C_PWM1_ACTIVE_LO        Constant 00000040
+C_PWM1_DUTY             Constant 000000FF
+C_PWM1_EN               Constant 00000080
+C_SAVETOACC             Constant 00000000
+C_SAVETOREG             Constant 00000001
+C_SFR_BANK              Constant 000000C0
+C_SFR_BANK0             Constant 00000000
+C_SFR_BANK1             Constant 00000040
+C_SFR_BANK2             Constant 00000080
+C_SFR_BANK3             Constant 000000C0
+C_SFR_RAM_ADDR          Constant 0000003F
+C_STANDBY_MODE          Constant 00000008
+C_STATUS_C              Constant 00000001
+C_STATUS_C_BIT          Constant 00000000
+C_STATUS_HALFC          Constant 00000002
+C_STATUS_HALFC_BIT      Constant 00000001
+C_STATUS_SLP            Constant 00000008
+C_STATUS_SLP_BIT        Constant 00000003
+C_STATUS_WDT            Constant 00000010
+C_STATUS_WDT_BIT        Constant 00000004
+C_STATUS_Z              Constant 00000004
+C_STATUS_Z_BIT          Constant 00000002
+C_TBHIGH_ADDR           Constant 00000003
+C_TBHIGH_DATA           Constant 0000003F
+C_TMR0_CLK              Constant 00000020
+C_TMR0_DATA             Constant 000000FF
+C_TMR0_DIS              Constant 00000000
+C_TMR0_EN               Constant 00000001
+C_TMR0_EXTCLK_EDGE      Constant 00000010
+C_TMR0_LOWCLK           Constant 00000080
+C_TMR1_CLKSRC_EXT       Constant 00000020
+C_TMR1_CLKSRC_INST      Constant 00000000
+C_TMR1_DATA             Constant 000000FF
+C_TMR1_DIS              Constant 00000000
+C_TMR1_EN               Constant 00000001
+C_TMR1_EXTCLK_EDGE      Constant 00000010
+C_TMR1_EXTFALLING       Constant 00000010
+C_TMR1_EXTRISING        Constant 00000000
+C_TMR1_ONESHOT          Constant 00000004
+C_TMR1_RELOAD           Constant 00000002
+C_WDT_EN                Constant 00000080
+CNT                     Constant 00000030
+DAT1                    Constant 00000031
+DAT2                    Constant 00000032
+DAT3                    Constant 00000033
+DELAY_1                 Constant 00000018
+DELAY_2                 Constant 00000019
+DELAY_3                 Constant 0000001A
+DELAY_NUS               Label    00000051
+FLAG1                   Constant 00000012
+FLAG2                   Constant 00000013
+FSR                     Constant 00000004
+INDF                    Constant 00000000
+INITIALIZE_FSR          Label    00000027
+INITIALIZE_FSR1         Label    00000029
+INITIALIZE_GPIO         Label    00000010
+INITIALIZE_TIMER0       Label    00000019
+INITIALIZE_TIMER1       Label    0000001F
+INT_TIME1               Constant 0000001B
+INT_TIME2               Constant 0000001C
+INTE                    Constant 0000000E
+INTF                    Constant 0000000F
+IOSTB                   Constant 00000006
+IRCR                    Constant 00000006
+KEY1                    Variable 00000005
+KEY2                    Variable 00000003
+KEY_CUR                 Constant 00000014
+KEY_DOWN                Constant 00000016
+KEY_KEEP                Constant 00000017
+KEY_PER                 Constant 00000015
+L_MAINLOOP              Label    0000005F
+LONG_KEY                Label    0000015D
+LONG_KEY_0              Label    00000162
+LONG_KEY_1              Label    00000167
+LONG_KEY_12             Label    00000170
+LONG_KEY_2              Label    00000172
+LONG_MODE               Constant 00000020
+LONG_TIME               Constant 00000021
+MODE                    Constant 00000022
+ON_FLAG                 Define   FLAG1,1
+OSCCR                   Constant 0000000F
+OUT_BUF                 Constant 00000025
+OUT_ON_BUF              Constant 00000024
+OUT_TIME                Constant 00000023
+P_LED1                  Define   PB,0
+P_LED2                  Define   PB,1
+P_LED3                  Define   PB,2
+P_OUT                   Define   PB,4
+PB                      Constant 00000006
+PCHBUF                  Constant 0000000A
+PCL                     Constant 00000002
+PCON                    Constant 00000008
+PCON1                   Constant 0000000F
+PF_PB_DIR_CTRL          Constant 00000006
+PF_PB_OD_CTRL           Constant 0000000C
+PF_PS0_CNT              Constant 0000000A
+PF_PWR_CTRL1            Constant 0000000F
+PORTB                   Constant 00000006
+PR_FILE_SEL             Constant 00000004
+PR_INDIR_ADDR           Constant 00000000
+PR_INT_CTRL             Constant 0000000E
+PR_INT_FLAG             Constant 0000000F
+PR_PB_DATA              Constant 00000006
+PR_PB_PH_CTRL           Constant 0000000C
+PR_PB_PL_CTRL           Constant 0000000B
+PR_PB_WAKEUP_CTRL       Constant 00000009
+PR_PCHIGH_DATA          Constant 0000000A
+PR_PCLOW_DATA           Constant 00000002
+PR_PWR_CTRL             Constant 00000008
+PR_STATUS               Constant 00000003
+PR_TMR0_DATA            Constant 00000001
+PS0CV                   Constant 0000000A
+PS1CV                   Constant 00000004
+PS_BZ1_CTRL             Constant 00000005
+PS_IR_CTRL              Constant 00000006
+PS_PS1_CNT              Constant 00000004
+PS_PWM1_DUTY            Constant 00000003
+PS_SYS_CTRL             Constant 0000000F
+PS_TBHIGH_ADDR          Constant 00000007
+PS_TBHIGH_DATA          Constant 00000008
+PS_TMR1_CTRL1           Constant 00000001
+PS_TMR1_CTRL2           Constant 00000002
+PS_TMR1_DATA            Constant 00000000
+PWM1DUTY                Constant 00000003
+R                       Constant 00000001
+R_PCON1                 Constant 00000026
+SCAN_KEY                Label    00000150
+SEND_DATA               Label    000000A7
+SEND_DATA2              Label    00000073
+SEND_DATA21             Label    0000007B
+SEND_DATA211            Label    00000091
+SEND_DATA22             Label    00000087
+SEND_DATA221            Label    0000009E
+SLEEP_RET               Label    0000004F
+SLEEP_TIME              Constant 0000001D
+SLEEP_WORK              Label    00000030
+STATUS                  Constant 00000003
+STATUS_TEMP             Constant 00000011
+T1CR1                   Constant 00000001
+T1CR2                   Constant 00000002
+T2_FLAG                 Define   FLAG2,0
+T_FLAG                  Define   FLAG1,0
+TBHD                    Constant 00000008
+TBHP                    Constant 00000007
+TEMP1                   Constant 00000028
+TEMP2                   Constant 00000029
+TIME1_INT               Label    00000178
+TMR0                    Constant 00000001
+TMR0_TEMP               Variable 00000084
+TMR1                    Constant 00000000
+V_INT                   Label    00000175
+V_MAIN                  Label    00000055
+V_RETIE                 Label    0000017D
+XDAT1                   Constant 00000034
+XDAT2                   Constant 00000035
+XDAT3                   Constant 00000036
+Z                       Constant 00000002
+
+
+SOURCE FILE TABLE
+000 C:\Users\Administrator\Desktop\NY8A051F\Program\main.asm
+001 C:\Users\Administrator\Desktop\NY8A051F\Program\NY8A051F.H
+002 C:\Users\Administrator\Desktop\NY8A051F\Program\Register.asm
+003 C:\Users\Administrator\Desktop\NY8A051F\Program\Initialize.asm
+004 C:\Users\Administrator\Desktop\NY8A051F\Program\function.asm
+
+PROCESSOR    = NY8A051F (8 bits) 
+PROGRAM ROM  = 0x00000000 - 0x000003FF
+DATA ROM     = 0x00000000 - 0x000003FF
+SRAM / SFR   = 0x00000000 - 0x00000000

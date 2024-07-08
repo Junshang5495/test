@@ -1,0 +1,116 @@
+
+;--------------- Vector Definition ----------------------------------------
+;--------------------------------------------------------------------------
+		ORG		0x000		
+		lgoto	V_Main
+		
+		ORG		0x008
+		lgoto   V_INT  
+
+
+        ORG		0x010  
+; =========================================================================
+;--------------- File Include ---------------------------------------------
+;--------------------------------------------------------------------------
+#include		NY8A051G.H				; The Header File for NY8A051G
+#include		Register.asm
+#include		Initialize.asm
+#include		function.asm
+
+;--------------- Code Start -----------------------------------------------
+;--------------------------------------------------------------------------
+V_Main:
+ 		Lcall	Initialize_GPIO
+ 		Lcall	Initialize_FSR
+ 		Lcall	Initialize_Timer0
+ 		Lcall	Initialize_Timer1
+		eni
+	            
+;--------------------------------------------------------------		
+L_MainLoop:		
+		clrwdt                  ; Clear WatchDog 
+		
+		btrss	T_flag
+		lgoto	L_MainLoop
+		bcr		T_flag			;100us
+				
+		incr	int_time1,r
+		movr	int_time1,a
+		xoria	200
+		btrss	status,z
+		lgoto	L_MainLoop
+		clrr	int_time1		;20ms
+			
+		Lcall	Scan_key		;按键扫描
+		Lcall	Sleep_Work		;睡眠
+				
+		lgoto	L_MainLoop
+	
+	
+;========================================
+;按键扫描	
+Scan_key:
+		movr	key_cur,a
+		movar	key_per
+		comr	pb,a
+		andia	0x02
+		movar	key_cur
+	
+;-------------按下有效----------------
+		comr	key_per,a
+		andar	key_cur,a
+		movar	key_down
+
+;-------------长按有效----------------		
+		movr	key_cur,a
+		andar	key_per,a
+		movar	key_keep
+		
+		btrss	key_down,key
+		ret
+		
+		ret
+	
+	
+
+
+	
+;--------------- Interrupt Service Routine --------------------------------
+;--------------------------------------------------------------------------
+V_INT:		
+		movar	acc_temp
+		swapr	status,a
+		movar	status_temp
+		
+		btrss	INTF,C_INT_TMR0_Bit	
+		lgoto	TIME1_INT
+
+		movia	TMR0_Temp
+		movar	TMR0
+		
+		movia   ~C_INT_TMR0              
+		movar	INTF  
+		
+		;movia	0x0f
+		;xorar	portb,r
+		
+TIME1_INT:
+		btrss	INTF,C_INT_TMR1_Bit	
+		lgoto	V_retie
+		
+		movia   ~C_INT_TMR1              
+		movar	INTF 
+		
+		movia	0x0f
+		xorar	portb,r
+		bsr		T_flag
+		
+V_retie:
+		swapr	status_temp,a
+		movar	status	
+		swapr	acc_temp,r
+		swapr	acc_temp,a		
+	    retie                           ; Return from interrupt and enable interrupt globally
+	
+end                                     ; End of Code
+		

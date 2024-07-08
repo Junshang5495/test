@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup Condition="">
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>Program</AssemblyName>
+    <Bank0Only>False</Bank0Only>
+    <BankselOptLevel>2</BankselOptLevel>
+    <BuildNYASMVersion>NYASM 2.42 [Build: 240221.00]</BuildNYASMVersion>
+    <BuildNYIDEVersion>NYIDE 5.32 [Build: 240430.00]</BuildNYIDEVersion>
+    <ChipId>NY8A051F</ChipId>
+    <ClientName>Gasia</ClientName>
+    <Configuration>Debug</Configuration>
+    <GenAsmListFile>True</GenAsmListFile>
+    <GenListFile>True</GenListFile>
+    <GenMapFile>True</GenMapFile>
+    <InitializeBss>False</InitializeBss>
+    <IsBankselOpt>True</IsBankselOpt>
+    <NYASMInstallDir>C:\Nyquest\NYASM\</NYASMInstallDir>
+    <NYIDEInstallDir>C:\Nyquest\NYIDE\</NYIDEInstallDir>
+    <OutputType>bin</OutputType>
+    <Platform>AsmNy8</Platform>
+    <ProjectGuid>{1FB317BC-3FDE-402D-BF42-374642F3F441}</ProjectGuid>
+    <ProjectOptionChanged>False</ProjectOptionChanged>
+    <ReservedInterruptRam>2</ReservedInterruptRam>
+    <ReservedRam>8</ReservedRam>
+    <RootNamespace>GPIO_Control</RootNamespace>
+    <TrimSetting>+ 0%</TrimSetting>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="function.asm" EntryPoint="false" MetaData="" />
+    <Compile Include="Initialize.asm" EntryPoint="false" MetaData="" />
+    <Compile Include="main.asm" EntryPoint="true" MetaData="" />
+    <None Include="NY8A051F.H" EntryPoint="false" MetaData="" />
+    <None Include="Program.cb" EntryPoint="false" MetaData="" />
+    <Compile Include="Register.asm" EntryPoint="false" MetaData="" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Client: Gasia" EntryPoint="false" MetaData="" />
+    <Reference Include="Config Block: Program.cb" EntryPoint="false" MetaData="" />
+    <Reference Include="IC Body: NY8A051F" EntryPoint="false" MetaData="" />
+  </ItemGroup>
+  <Properties>
+    <Array name="ActionFiles" />
+    <Array name="bookmarks">
+      <Element value="Breakpoint|main.asm|62|3|Invalid|||||||||" />
+    </Array>
+    <Array name="DisassemblyPadColumnWidthInfo">
+      <Element value="AddrWidth|60" />
+      <Element value="CodeWidth|140" />
+      <Element value="ArrowWidth|20" />
+    </Array>
+    <Array name="EEPROMOverwriteData" />
+    <Array name="ExternalResource" />
+    <Array name="files">
+      <Element value="main.asm|True" />
+      <Element value="Initialize.asm|False" />
+      <Element value="Register.asm|False" />
+      <Element value="Function.asm|False" />
+      <Element value="NY8A051F.H|False" />
+    </Array>
+    <Array name="InstrumentFiles" />
+    <Array name="MelodyDatabaseFiles" />
+    <Array name="MusicFiles" />
+    <Array name="RegisterPadExpandInfo">
+      <Element value="0|True" />
+      <Element value="100|False" />
+      <Element value="101|False" />
+      <Element value="102|False" />
+      <Element value="103|False" />
+      <Element value="104|False" />
+      <Element value="105|False" />
+      <Element value="106|False" />
+      <Element value="107|False" />
+      <Element value="108|False" />
+      <Element value="109|False" />
+      <Element value="110|False" />
+      <Element value="111|False" />
+      <Element value="112|False" />
+      <Element value="1|True" />
+      <Element value="200|False" />
+      <Element value="201|False" />
+      <Element value="202|False" />
+      <Element value="203|False" />
+      <Element value="2|True" />
+      <Element value="300|False" />
+      <Element value="301|True" />
+      <Element value="302|True" />
+      <Element value="303|False" />
+      <Element value="304|False" />
+      <Element value="305|False" />
+      <Element value="306|False" />
+      <Element value="307|False" />
+      <Element value="308|False" />
+      <Element value="309|False" />
+    </Array>
+    <Array name="RegisterWindowExpandInfo">
+      <Element value="R-Page|True" />
+      <Element value="INDF@R-Page|False" />
+      <Element value="TMR0@R-Page|False" />
+      <Element value="PCL@R-Page|False" />
+      <Element value="STATUS@R-Page|False" />
+      <Element value="FSR@R-Page|False" />
+      <Element value="PORTB@R-Page|False" />
+      <Element value="PCON@R-Page|True" />
+      <Element value="BWUCON@R-Page|False" />
+      <Element value="PCHBUF@R-Page|False" />
+      <Element value="BPLCON@R-Page|False" />
+      <Element value="BPHCON@R-Page|False" />
+      <Element value="INTE@R-Page|False" />
+      <Element value="INTF@R-Page|False" />
+      <Element value="INDF|False" />
+      <Element value="TMR0|False" />
+      <Element value="PCL|False" />
+      <Element value="STATUS|False" />
+      <Element value="GP7@STATUS|False" />
+      <Element value="GP6@STATUS|False" />
+      <Element value="GP5@STATUS|False" />
+      <Element value="/TO@STATUS|False" />
+      <Element value="/PD@STATUS|False" />
+      <Element value="Z@STATUS|False" />
+      <Element value="DC@STATUS|False" />
+      <Element value="C@STATUS|False" />
+      <Element value="FSR|False" />
+      <Element value="BK@FSR|False" />
+      <Element value="FSR@FSR|False" />
+      <Element value="PORTB|False" />
+      <Element value="GP7@PORTB|False" />
+      <Element value="GP6@PORTB|False" />
+      <Element value="PB5@PORTB|False" />
+      <Element value="PB4@PORTB|False" />
+      <Element value="PB3@PORTB|False" />
+      <Element value="PB2@PORTB|False" />
+      <Element value="PB1@PORTB|False" />
+      <Element value="PB0@PORTB|False" />
+      <Element value="PCON|True" />
+      <Element value="WDTEN@PCON|False" />
+      <Element value="EIS@PCON|False" />
+      <Element value="LVDEN@PCON|False" />
+      <Element value="GP4@PCON|False" />
+      <Element value="LVREN@PCON|False" />
+      <Element value="GP2@PCON|False" />
+      <Element value="GP1@PCON|False" />
+      <Element value="GP0@PCON|False" />
+      <Element value="WDTEN|False" />
+      <Element value="EIS|False" />
+      <Element value="LVDEN|False" />
+      <Element value="GP4|False" />
+      <Element value="LVREN|False" />
+      <Element value="GP2|False" />
+      <Element value="GP1|False" />
+      <Element value="GP0|False" />
+      <Element value="BWUCON|False" />
+      <Element value="WUPB5@BWUCON|False" />
+      <Element value="WUPB4@BWUCON|False" />
+      <Element value="WUPB3@BWUCON|False" />
+      <Element value="WUPB2@BWUCON|False" />
+      <Element value="WUPB1@BWUCON|False" />
+      <Element value="WUPB0@BWUCON|False" />
+      <Element value="PCHBUF|False" />
+      <Element value="GP2@PCHBUF|False" />
+      <Element value="PCHBUF@PCHBUF|False" />
+      <Element value="BPLCON|False" />
+      <Element value="/PLPB3@BPLCON|False" />
+      <Element value="/PLPB2@BPLCON|False" />
+      <Element value="/PLPB1@BPLCON|False" />
+      <Element value="/PLPB0@BPLCON|False" />
+      <Element value="BPHCON|False" />
+      <Element value="/PHPB5@BPHCON|False" />
+      <Element value="/PHPB4@BPHCON|False" />
+      <Element value="/PHPB3@BPHCON|False" />
+      <Element value="/PHPB2@BPHCON|False" />
+      <Element value="/PHPB1@BPHCON|False" />
+      <Element value="/PHPB0@BPHCON|False" />
+      <Element value="INTE|False" />
+      <Element value="WDTIE@INTE|False" />
+      <Element value="LVDIE@INTE|False" />
+      <Element value="T1IE@INTE|False" />
+      <Element value="INTIE@INTE|False" />
+      <Element value="PBIE@INTE|False" />
+      <Element value="T0IE@INTE|False" />
+      <Element value="INTF|False" />
+      <Element value="WDTIF@INTF|False" />
+      <Element value="LVDIF@INTF|False" />
+      <Element value="T1IF@INTF|False" />
+      <Element value="INTIF@INTF|False" />
+      <Element value="PBIF@INTF|False" />
+      <Element value="T0IF@INTF|False" />
+      <Element value="F-Page|True" />
+      <Element value="IOSTB@F-Page|False" />
+      <Element value="PS0CV@F-Page|False" />
+      <Element value="BODCON@F-Page|False" />
+      <Element value="PCON1@F-Page|True" />
+      <Element value="IOSTB|False" />
+      <Element value="GP7@IOSTB|False" />
+      <Element value="GP6@IOSTB|False" />
+      <Element value="IOPB5@IOSTB|False" />
+      <Element value="IOPB4@IOSTB|False" />
+      <Element value="IOPB3@IOSTB|False" />
+      <Element value="IOPB2@IOSTB|False" />
+      <Element value="IOPB1@IOSTB|False" />
+      <Element value="IOPB0@IOSTB|False" />
+      <Element value="PS0CV|False" />
+      <Element value="BODCON|False" />
+      <Element value="ODPB5@BODCON|False" />
+      <Element value="ODPB4@BODCON|False" />
+      <Element value="GP3@BODCON|False" />
+      <Element value="ODPB2@BODCON|False" />
+      <Element value="ODPB1@BODCON|False" />
+      <Element value="ODPB0@BODCON|False" />
+      <Element value="PCON1|True" />
+      <Element value="GIE@PCON1|False" />
+      <Element value="LVDOUT@PCON1|False" />
+      <Element value="LVDS3@PCON1|False" />
+      <Element value="LVDS2@PCON1|False" />
+      <Element value="LVDS1@PCON1|False" />
+      <Element value="LVDS0@PCON1|False" />
+      <Element value="GP1@PCON1|False" />
+      <Element value="T0EN@PCON1|False" />
+      <Element value="GIE|False" />
+      <Element value="LVDOUT|False" />
+      <Element value="LVDS3|False" />
+      <Element value="LVDS2|False" />
+      <Element value="LVDS1|False" />
+      <Element value="LVDS0|False" />
+      <Element value="GP1|False" />
+      <Element value="T0EN|False" />
+      <Element value="S-Page|False" />
+      <Element value="TMR1@S-Page|False" />
+      <Element value="T1CR1@S-Page|False" />
+      <Element value="T1CR2@S-Page|False" />
+      <Element value="PWM1DUTY@S-Page|False" />
+      <Element value="PS1CV@S-Page|False" />
+      <Element value="BZ1CR@S-Page|False" />
+      <Element value="IRCR@S-Page|False" />
+      <Element value="TBHP@S-Page|False" />
+      <Element value="TBHD@S-Page|False" />
+      <Element value="OSCCR@S-Page|False" />
+    </Array>
+    <Array name="ResourceManager" />
+    <Array name="UpdateableResources" />
+    <Array name="VoiceFiles" />
+    <Array name="VRModule" />
+    <Array name="WatchItemInfo">
+      <Element value="R_PCON1|0" />
+      <Element value="temp1|0" />
+      <Element value="NewItem_1|0" />
+      <Element value="NewItem|0" />
+    </Array>
+    <Array name="WatchPadColumnWidthInfo">
+      <Element value="NameWidth|50" />
+      <Element value="AddrWidth|50" />
+      <Element value="ValWidth|50" />
+      <Element value="PageWidth|50" />
+    </Array>
+  </Properties>
+</Project>
